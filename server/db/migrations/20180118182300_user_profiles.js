@@ -1,6 +1,6 @@
 exports.up = function (knex, Promise) {
     return knex.schema.createTable('user_profiles', table => {
-        table.int('user_id');
+        table.integer('user_id');
         table.string('display_name');
         table.enum('gender', ['f', 'm', 'u', 'o']);
         table.date('date_of_birth');

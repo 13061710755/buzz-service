@@ -1,6 +1,6 @@
 exports.up = function (knex, Promise) {
     return knex.schema.createTable('user_social_accounts', table => {
-        table.int('user_id');
+        table.integer('user_id');
         table.string('facebook_id');
         table.string('facebook_name');
         table.json('facebook_data');
