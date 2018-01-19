@@ -91,7 +91,7 @@ describe("routes: users", () => {
                     done();
                 });
         });
-        it.skip("should return an error when the resource already exists", done => {
+        it("should return an error when the resource already exists", done => {
             chai
                 .request(server)
                 .post(`${PATH}`)
@@ -103,7 +103,21 @@ describe("routes: users", () => {
                     should.exist(err);
                     res.status.should.eql(409);
                     res.type.should.eql("application/json");
-                    res.body.error.should.eql("The resource already exists");
+                    res.body.error.should.eql("The user already exists");
+                    done();
+                });
+        });
+    });
+
+    describe(`GET ${PATH}/by-facebook/:facebook_id`, () => {
+        it('should find user by facebook id', done => {
+            chai
+                .request(server)
+                .get(`${PATH}/by-facebook/12345`)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(200);
+                    res.type.should.eql('application/json');
                     done();
                 });
         });

@@ -36,6 +36,30 @@ const show = async ctx => {
     }
 };
 
+const getByFacebookId = async ctx => {
+    try {
+        const {facebook_id} = ctx.params;
+        let users = await knex('users')
+            .leftJoin('user_profiles', 'users.user_id', 'user_profiles.user_id')
+            .leftJoin('user_social_accounts', 'users.user_id', 'user_social_accounts.user_id')
+            .select('users.user_id as user_id', 'users.name', 'users.created_at', 'users.role', 'user_profiles.avatar', 'user_social_accounts.facebook_id', 'user_social_accounts.wechat_data')
+            .where({'user_social_accounts.facebook_id': facebook_id});
+
+        if (!users.length) {
+            throw new Error('The requested user does not exists');
+        }
+
+        ctx.body = users[0];
+    } catch (ex) {
+        console.error(ex);
+
+        ctx.status = 404;
+        ctx.body = {
+            error: error.message
+        }
+    }
+};
+
 const create = async ctx => {
     let trx = await promisify(knex.transaction);
 
@@ -79,4 +103,4 @@ const create = async ctx => {
         };
     }
 };
-module.exports = {index, show, create};
+module.exports = {index, show, getByFacebookId, create};
