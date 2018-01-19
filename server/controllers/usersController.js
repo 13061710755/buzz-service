@@ -1,3 +1,4 @@
+const promisify = require('../common/promisify')
 const env = process.env.NODE_ENV || "test";
 const config = require("../../knexfile")[env];
 const knex = require("knex")(config);
@@ -21,7 +22,7 @@ const show = async ctx => {
             .where({'users.user_id': user_id});
 
         if (!users.length) {
-            throw new Error("The requested resource does not exists");
+            throw new Error("The requested user does not exists");
         }
 
         ctx.body = users[0];
@@ -34,22 +35,47 @@ const show = async ctx => {
         };
     }
 };
+
 const create = async ctx => {
+    let trx = await promisify(knex.transaction);
+
     try {
         const {body} = ctx.request;
-        const article = await knex("articles").insert(body);
-        if (!article.length) {
-            throw new Error("The resource already exists");
+
+        const users = await trx("users").insert({
+            name: body.name || '',
+            role: body.role,
+            created_at: new Date()
+        });
+        if (!users.length) {
+            throw new Error("The user already exists");
         }
+
+        const userProfile = await trx('user_profiles').insert({
+            user_id: users[0],
+            avatar: body.avatar || ''
+        });
+
+        const userSocialAccounts = await trx('user_social_accounts').insert({
+            user_id: users[0],
+            facebook_id: body.facebook_id || null,
+            facebook_name: body.facebook_name || '',
+            wechat_openid: body.wechat_openid || null,
+            wechat_unionid: body.wechat_unionid || null
+        });
+
+        await trx.commit();
+
         ctx.status = 201;
-        ctx.set("Location", `${ctx.request.URL}/${article[0]}`);
-        ctx.body = {
-            data: article
-        };
+        ctx.set("Location", `${ctx.request.URL}/${users[0]}`);
+        ctx.body = users[0];
     } catch (error) {
+        console.error(error);
+
+        await trx.rollback();
         ctx.status = 409;
         ctx.body = {
-            error: "The resource already exists"
+            error: "The user already exists"
         };
     }
 };
