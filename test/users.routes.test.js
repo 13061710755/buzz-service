@@ -35,8 +35,8 @@ describe("routes: users", () => {
                     should.not.exist(err);
                     res.status.should.eql(200);
                     res.type.should.eql("application/json");
-                    res.body.data.length.should.eql(3);
-                    res.body.data[0].should.include.keys("user_id", "name", "created_at", "role");
+                    res.body.length.should.eql(3);
+                    res.body[0].should.include.keys("user_id", "name", "created_at", "role", "avatar", "facebook_id", "wechat_data");
                     done();
                 });
         });
@@ -44,7 +44,7 @@ describe("routes: users", () => {
     /** every subsequent test must be added here !! **/
 
     describe.skip(`GET ${PATH}/:id`, () => {
-        it("should return a single resource", done => {
+        it("should return a single user", done => {
             chai
                 .request(server)
                 .get(`${PATH}/1`)

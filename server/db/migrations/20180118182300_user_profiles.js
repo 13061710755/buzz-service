@@ -10,6 +10,7 @@ exports.up = function (knex, Promise) {
         table.string('email');
         table.string('language').defaultTo('en-US');
         table.string('location');
+        table.string('avatar');
 
         table.foreign('user_id').references('users.user_id');
     })

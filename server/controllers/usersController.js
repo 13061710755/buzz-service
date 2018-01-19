@@ -3,10 +3,10 @@ const config = require("../../knexfile")[env];
 const knex = require("knex")(config);
 const index = async ctx => {
     try {
-        const articles = await knex("users").select();
-        ctx.body = {
-            data: articles
-        };
+        ctx.body = await knex("users")
+            .leftJoin('user_profiles', 'users.user_id', 'user_profiles.user_id')
+            .leftJoin('user_social_accounts', 'users.user_id', 'user_social_accounts.user_id')
+            .select();
     } catch (error) {
         console.error(error);
     }
