@@ -122,4 +122,29 @@ describe("routes: users", () => {
                 });
         });
     });
+
+    describe(`GET ${PATH}/by-wechat`, () => {
+        it('should find user by wechat open id', done => {
+            chai
+                .request(server)
+                .get(`${PATH}/by-wechat?openid=12345`)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(200);
+                    res.type.should.eql('application/json');
+                    done();
+                });
+        });
+
+        it('should find user by wechat union id', done => {
+            chai.request(server)
+                .get(`${PATH}/by-wechat?unionid=12345`)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(200);
+                    res.type.should.eql('application/json');
+                    done();
+                });
+        });
+    })
 });

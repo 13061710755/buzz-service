@@ -4,10 +4,7 @@ const config = require("../../knexfile")[env];
 const knex = require("knex")(config);
 const index = async ctx => {
     try {
-        ctx.body = await knex("users")
-            .leftJoin('user_profiles', 'users.user_id', 'user_profiles.user_id')
-            .leftJoin('user_social_accounts', 'users.user_id', 'user_social_accounts.user_id')
-            .select('users.user_id', 'users.name', 'users.created_at', 'users.role', 'user_profiles.avatar', 'user_social_accounts.facebook_id', 'user_social_accounts.wechat_data');
+        ctx.body = await selectUsers();
     } catch (error) {
         console.error(error);
     }
@@ -15,10 +12,7 @@ const index = async ctx => {
 const show = async ctx => {
     try {
         const {user_id} = ctx.params;
-        let users = await knex("users")
-            .leftJoin('user_profiles', 'users.user_id', 'user_profiles.user_id')
-            .leftJoin('user_social_accounts', 'users.user_id', 'user_social_accounts.user_id')
-            .select('users.user_id as user_id', 'users.name', 'users.created_at', 'users.role', 'user_profiles.avatar', 'user_social_accounts.facebook_id', 'user_social_accounts.wechat_data')
+        let users = await selectUsers()
             .where({'users.user_id': user_id});
 
         if (!users.length) {
@@ -36,13 +30,16 @@ const show = async ctx => {
     }
 };
 
+let selectUsers = function () {
+    return knex('users')
+        .leftJoin('user_profiles', 'users.user_id', 'user_profiles.user_id')
+        .leftJoin('user_social_accounts', 'users.user_id', 'user_social_accounts.user_id')
+        .select('users.user_id as user_id', 'users.name', 'users.created_at', 'users.role', 'user_profiles.avatar', 'user_social_accounts.facebook_id', 'user_social_accounts.wechat_data');
+};
 const getByFacebookId = async ctx => {
     try {
         const {facebook_id} = ctx.params;
-        let users = await knex('users')
-            .leftJoin('user_profiles', 'users.user_id', 'user_profiles.user_id')
-            .leftJoin('user_social_accounts', 'users.user_id', 'user_social_accounts.user_id')
-            .select('users.user_id as user_id', 'users.name', 'users.created_at', 'users.role', 'user_profiles.avatar', 'user_social_accounts.facebook_id', 'user_social_accounts.wechat_data')
+        let users = await selectUsers()
             .where({'user_social_accounts.facebook_id': facebook_id});
 
         if (!users.length) {
@@ -55,7 +52,41 @@ const getByFacebookId = async ctx => {
 
         ctx.status = 404;
         ctx.body = {
-            error: error.message
+            error: ex.message
+        }
+    }
+};
+
+const getByWechat = async ctx => {
+    try {
+        const {openid, unionid} = ctx.query;
+        if (!openid && !unionid) {
+            throw new Error('Please specifiy a openid or unionid');
+        }
+
+        let filter = {};
+        if (openid) {
+            filter['user_social_accounts.wechat_openid'] = openid;
+        }
+        if (unionid) {
+            filter['user_social_accounts.wechat_unionid'] = unionid;
+        }
+
+        console.log('filter = ', filter);
+
+        let users = await selectUsers().where(filter);
+
+        if (!users.length) {
+            throw new Error('The requested user does not exists');
+        }
+
+        ctx.body = users[0];
+    } catch (ex) {
+        console.error(ex);
+
+        ctx.status = 404;
+        ctx.body = {
+            error: ex.message
         }
     }
 };
@@ -103,4 +134,4 @@ const create = async ctx => {
         };
     }
 };
-module.exports = {index, show, getByFacebookId, create};
+module.exports = {index, show, getByFacebookId, getByWechat, create};
