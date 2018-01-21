@@ -80,7 +80,8 @@ describe("routes: users", () => {
                 .send({
                     facebook_id: "12345",
                     facebook_name: "John Doe",
-                    role: 's'
+                    role: 's',
+                    name: 'John Doe'
                 })
                 .end((err, res) => {
                     should.not.exist(err);

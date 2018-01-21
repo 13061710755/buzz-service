@@ -38,7 +38,10 @@ module.exports = {
             max: 10
         },
         migrations: {
-            tableName: 'knex_migrations'
+            directory: path.join(BASE_PATH, 'migrations')
+        },
+        seeds: {
+            directory: path.join(BASE_PATH, 'seeds')
         }
     },
 
