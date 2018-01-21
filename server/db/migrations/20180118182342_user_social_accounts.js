@@ -9,7 +9,7 @@ exports.up = function (knex, Promise) {
         table.string('wechat_name');
         table.json('wechat_data');
 
-        table.foreign('user_id').references('users.user_id');
+        // table.foreign('user_id').references('users.user_id');
     });
 };
 

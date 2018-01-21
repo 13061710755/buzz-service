@@ -20,6 +20,7 @@
     "koa": "^2.4.1",
     "koa-bodyparser": "^4.2.0",
     "koa-router": "^7.3.0",
+    "mysql": "^2.15.0",
     "mysql2": "^1.5.1",
     "pg": "git+https://github.com/brianc/node-postgres.git",
     "sequelize": "^4.31.2"

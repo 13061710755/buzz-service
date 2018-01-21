@@ -97,11 +97,15 @@ const create = async ctx => {
     try {
         const {body} = ctx.request;
 
-        const users = await trx("users").insert({
-            name: body.name || '',
-            role: body.role,
-            created_at: new Date()
-        });
+        const users = await trx("users")
+            .returning('user_id')
+            .insert({
+                name: body.name || '',
+                role: body.role,
+                created_at: new Date(),
+                user_id: body.user_id || undefined
+            });
+
         if (!users.length) {
             throw new Error("The user already exists");
         }
