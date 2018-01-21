@@ -138,4 +138,23 @@ const create = async ctx => {
         };
     }
 };
-module.exports = {index, show, getByFacebookId, getByWechat, create};
+
+const signIn = async ctx => {
+    const {user_id, facebook_id, wechat_openid, wechat_unionid} = ctx.request.body;
+
+    if (!user_id) {
+        return ctx.throw(403, 'sign in not allowed');
+    }
+
+    let filter = {'users.user_id': user_id};
+
+    let users = await selectUsers().where(filter);
+
+    if (!users.length) {
+        return ctx.throw(404, 'The requested user does not exists')
+    }
+
+    ctx.cookies.set('user_id', user_id, {httpOnly: true, expires: 0});
+    ctx.body = users[0];
+};
+module.exports = {index, show, getByFacebookId, getByWechat, create, signIn};

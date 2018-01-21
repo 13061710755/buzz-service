@@ -148,4 +148,45 @@ describe("routes: users", () => {
                 });
         });
     })
+
+    describe(`PUT ${PATH}/sign-in`, () => {
+        it('should not allow empty info log in', done => {
+            chai.request(server)
+                .put(`${PATH}/sign-in`)
+                .send({})
+                .end((err, res) => {
+                    should.exist(err);
+                    res.status.should.eql(403);
+                    done();
+                });
+        });
+
+        it('should not sign in a non-exist user', done => {
+            chai.request(server)
+                .put(`${PATH}/sign-in`)
+                .send({user_id: 999})
+                .end((err, res) => {
+                    should.exist(err);
+                    res.status.should.eql(404);
+                    done();
+                });
+        });
+
+        it('should sign in a facebook user', done => {
+            chai.request(server)
+                .put(`${PATH}/sign-in`)
+                .send({
+                    user_id: 1,
+                    facebook_id: 12345
+                })
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(200);
+                    res.type.should.eql("application/json");
+                    should.exist(res.headers['set-cookie']);
+                    res.headers['set-cookie'][0].indexOf('user_id').should.eql(0);
+                    done();
+                })
+        })
+    })
 });
