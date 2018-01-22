@@ -227,9 +227,7 @@ const update = async ctx => {
 
         await trx.rollback();
         ctx.status = 409;
-        ctx.body = {
-            error: "The user already exists"
-        };
+        ctx.body = error;
     }
 };
 module.exports = {index, show, getByFacebookId, getByWechat, create, signIn, update};
