@@ -81,7 +81,8 @@ describe("routes: users", () => {
                     facebook_id: "12345",
                     facebook_name: "John Doe",
                     role: 's',
-                    name: 'John Doe'
+                    name: 'John Doe',
+                    user_id: '99'
                 })
                 .end((err, res) => {
                     should.not.exist(err);
@@ -147,7 +148,7 @@ describe("routes: users", () => {
                     done();
                 });
         });
-    })
+    });
 
     describe(`PUT ${PATH}/sign-in`, () => {
         it('should not allow empty info log in', done => {
@@ -188,5 +189,36 @@ describe("routes: users", () => {
                     done();
                 })
         })
-    })
+    });
+
+    describe(`PUT ${PATH}/:user_id`, () => {
+        it('should update a user', done => {
+            chai.request(server)
+                .put(`${PATH}/2`)
+                .send({
+                    name: 'changed',
+                    display_name: 'changed',
+                    facebook_name: 'changed'
+                })
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(201);
+
+                    chai.request(server)
+                        .get(`${PATH}/2`)
+                        .end((err, res) => {
+                            should.not.exist(err);
+
+                            console.log('res = ', res.body);
+
+                            res.status.should.eql(200);
+                            res.body.name.should.eql('changed');
+                            res.body.display_name.should.eql('changed');
+                            res.body.facebook_name.should.eql('changed');
+
+                            done();
+                        });
+                });
+        });
+    });
 });

@@ -34,7 +34,7 @@ let selectUsers = function () {
     return knex('users')
         .leftJoin('user_profiles', 'users.user_id', 'user_profiles.user_id')
         .leftJoin('user_social_accounts', 'users.user_id', 'user_social_accounts.user_id')
-        .select('users.user_id as user_id', 'users.name', 'users.created_at', 'users.role', 'user_profiles.avatar', 'user_social_accounts.facebook_id', 'user_social_accounts.wechat_data');
+        .select('users.user_id as user_id', 'users.name as name', 'users.created_at as created_at', 'users.role as role', 'user_profiles.avatar as avatar', 'user_profiles.display_name as display_name', 'user_profiles.gender as gender', 'user_profiles.date_of_birth as date_of_birth', 'user_profiles.interests as interests', 'user_profiles.mobile as mobile', 'user_profiles.email as email', 'user_profiles.language as language', 'user_profiles.location as location', 'user_profiles.description as description', 'user_social_accounts.facebook_id as facebook_id', 'user_social_accounts.wechat_data as wechat_data', 'user_social_accounts.facebook_name as facebook_name');
 };
 const getByFacebookId = async ctx => {
     try {
@@ -157,4 +157,79 @@ const signIn = async ctx => {
     ctx.cookies.set('user_id', user_id, {httpOnly: true, expires: 0});
     ctx.body = users[0];
 };
-module.exports = {index, show, getByFacebookId, getByWechat, create, signIn};
+
+const update = async ctx => {
+    let trx = await promisify(knex.transaction);
+
+    let makeUpdations = function (updations) {
+        console.log('updating ...', updations);
+        let result = {};
+
+        Object.keys(updations).map(prop => {
+            if (updations[prop]) {
+                result[prop] = updations[prop];
+            }
+        });
+
+        return result;
+    };
+    try {
+        const {body} = ctx.request;
+
+        let user = makeUpdations({
+            name: body.name,
+            role: body.role
+        });
+
+        if (Object.keys(user).length > 0) {
+            const users = await trx("users")
+                .where('user_id', ctx.params.user_id)
+                .update(user);
+        }
+
+        let profiles = makeUpdations({
+            avatar: body.avatar,
+            display_name: body.display_name,
+            gender: body.gender,
+            date_of_birth: body.date_of_birth,
+            interests: body.interests,
+            description: body.description,
+            mobile: body.mobile,
+            email: body.email,
+            language: body.language,
+            location: body.location
+        });
+        if (Object.keys(profiles).length > 0) {
+            const userProfile = await trx('user_profiles')
+                .where('user_id', ctx.params.user_id)
+                .update(profiles);
+        }
+
+        let accounts = makeUpdations({
+            facebook_id: body.facebook_id,
+            facebook_name: body.facebook_name,
+            wechat_openid: body.wechat_openid,
+            wechat_unionid: body.wechat_unionid
+        });
+        if (Object.keys(accounts).length > 0) {
+            const userSocialAccounts = await trx('user_social_accounts')
+                .where('user_social_accounts.user_id', ctx.params.user_id)
+                .update(accounts);
+        }
+
+        await trx.commit();
+
+        ctx.status = 201;
+        ctx.set("Location", `${ctx.request.URL}/${ctx.params.user_id}`);
+        ctx.body = body;
+    } catch (error) {
+        console.error('updating user error: ', error);
+
+        await trx.rollback();
+        ctx.status = 409;
+        ctx.body = {
+            error: "The user already exists"
+        };
+    }
+};
+module.exports = {index, show, getByFacebookId, getByWechat, create, signIn, update};
