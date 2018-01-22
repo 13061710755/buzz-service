@@ -192,7 +192,7 @@ const update = async ctx => {
             display_name: body.display_name,
             gender: body.gender,
             date_of_birth: body.date_of_birth,
-            interests: body.interests,
+            interests: body.interests[0],
             description: body.description,
             mobile: body.mobile,
             email: body.email,
