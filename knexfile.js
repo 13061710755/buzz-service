@@ -37,9 +37,30 @@ module.exports = {
         }
     },
 
-    staging: {
+    staging_mysql: {
         client: 'mysql',
         connection: process.env.CLEARDB_DATABASE_URL,
+        migrations: {
+            directory: path.join(BASE_PATH, 'migrations')
+        },
+        seeds: {
+            directory: path.join(BASE_PATH, 'seeds')
+        }
+    },
+
+    staging: {
+        client: 'postgresql',
+        connection: {
+            host: process.env.PG_HOST,
+            database: process.env.PG_DB,
+            user: process.env.PG_USER,
+            password: process.env.PG_PASSWORD,
+            charset: 'utf-8'
+        },
+        pool: {
+            min: 2,
+            max: 10
+        },
         migrations: {
             directory: path.join(BASE_PATH, 'migrations')
         },
