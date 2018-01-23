@@ -216,7 +216,7 @@ describe("routes: users", () => {
                             res.body.name.should.eql('changed');
                             res.body.display_name.should.eql('changed');
                             res.body.facebook_name.should.eql('changed');
-                            res.body.interests.should.eql('football');
+                            res.body.interests.should.eql('football,volleyball');
 
                             done();
                         });

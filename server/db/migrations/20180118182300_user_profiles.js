@@ -4,7 +4,6 @@ exports.up = function (knex, Promise) {
         table.string('display_name');
         table.enum('gender', ['f', 'm', 'u', 'o']);
         table.date('date_of_birth');
-        table.enum('interests', ['football', 'volleyball', 'ping-pang', 'basketball']);
         table.text('description');
         table.string('mobile');
         table.string('email');
