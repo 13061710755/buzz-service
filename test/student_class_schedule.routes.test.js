@@ -83,4 +83,23 @@ describe("routes: student class schedule", () => {
                 });
         });
     });
+
+    describe(`PUT ${PATH}/:user_id`, () => {
+        it('should allow user cancel a booking', done => {
+            chai
+                .request(server)
+                .put(`${PATH}/1`)
+                .send({
+                    start_time: new Date(2018, 1, 24, 9, 0)
+                })
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(200);
+                    res.type.should.eql('application/json');
+                    res.body.should.eql({status: 'cancelled', user_id: 1});
+
+                    done();
+                })
+        });
+    })
 });
