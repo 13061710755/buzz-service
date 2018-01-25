@@ -1,7 +1,8 @@
 const Router = require('koa-router');
 const router = new Router();
-const companionsController = require('../controllers/companionClassScheduleController');
+const companionClassScheduleController = require('../controllers/companionClassScheduleController');
 const BASE_URL = `/api/v1/companion-class-schedule`;
-router.get(`${BASE_URL}/:user_id`, companionsController.list);
+router.get(`${BASE_URL}/:user_id`, companionClassScheduleController.list);
+router.post(`${BASE_URL}/:user_id`, companionClassScheduleController.create);
 
 module.exports = router;

@@ -42,4 +42,46 @@ describe("routes: companion class schedule", () => {
                 });
         });
     });
+
+    //create companion class schedule
+    describe(`POST ${PATH}/:user_id`, () => {
+        it("should return the newly added companion class schedules alongside a Location header", done => {
+            chai
+                .request(server)
+                .post(`${PATH}/2`)
+                .send([{
+                    start_time: new Date(2018, 1, 1, 1, 0),
+                    end_time: new Date(2018, 1, 1, 2, 0)
+                }, {
+                    start_time: new Date(2018, 1, 2, 1, 0),
+                    end_time: new Date(2018, 1, 2, 2, 0)
+                }])
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(201);
+                    res.should.have.header("Location");
+                    res.type.should.eql("application/json");
+                    done();
+                });
+        });
+        it("should return an error when the schedule conflicts", done => {
+            chai
+                .request(server)
+                .post(`${PATH}/1`)
+                .send([{
+                    start_time: new Date(2018, 1, 24, 9, 0),
+                    end_time: new Date(2018, 1, 24, 10, 0)
+                }, {
+                    start_time: new Date(2018, 1, 2, 1, 0),
+                    end_time: new Date(2018, 1, 2, 2, 0)
+                }])
+                .end((err, res) => {
+                    should.exist(err);
+                    res.status.should.eql(409);
+                    res.type.should.eql("text/plain");
+                    res.text.should.eql("Schedule start_time conflicts!");
+                    done();
+                });
+        });
+    });
 });
