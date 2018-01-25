@@ -4,5 +4,6 @@ const companionClassScheduleController = require('../controllers/companionClassS
 const BASE_URL = `/api/v1/companion-class-schedule`;
 router.get(`${BASE_URL}/:user_id`, companionClassScheduleController.list);
 router.post(`${BASE_URL}/:user_id`, companionClassScheduleController.create);
+router.put(`${BASE_URL}/:user_id`, companionClassScheduleController.cancel);
 
 module.exports = router;

@@ -100,4 +100,31 @@ const create = async ctx => {
     }
 };
 
-module.exports = {list, create};
+const cancel = async ctx=> {
+  try{
+      let {body} = ctx.request;
+      let filter = {
+          'user_id': ctx.params.user_id,
+          'start_time': new Date(body.start_time).getTime()
+      };
+
+      let res = await knex('companion_class_schedule').where(filter).update({
+          'status': 'cancelled'
+      });
+
+      if(res === 1){
+          ctx.body = (await knex('companion_class_schedule')
+              .where(filter)
+              .select('user_id', 'status'))[0];
+      }else{
+          throw new Error(res);
+      }
+  }
+  catch (ex){
+      console.error(ex);
+      ctx.throw(500, ex);
+  }
+
+};
+
+module.exports = {list, create, cancel};
