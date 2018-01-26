@@ -33,6 +33,12 @@ exports.seed = function (knex, Promise) {
                     status: 'confirmed',
                     start_time: new Date(2016, 1, 1, 9, 0),
                     end_time: new Date(2016, 1, 1, 10, 0)
+                },
+                {
+                    user_id: 2,
+                    status: 'booking',
+                    start_time: new Date(2018, 1, 24, 9, 0),
+                    end_time: new Date(2018, 1, 24, 10, 0)
                 }
             ]);
         });
