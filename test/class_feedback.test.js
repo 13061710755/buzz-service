@@ -41,6 +41,28 @@ describe("routes:get class feedback", () => {
                     done();
                 });
         });
+
+        it("should return the newly added feed_back alongside a Location header", done => {
+            chai
+                .request(server)
+                .post(`${PATH}/2`)
+                .send([{
+                    class_id: 2,
+                    from_user_id: 1,
+                    to_user_id: 2,
+                    feedback_time: new Date(),
+                    score: 5,
+                    comment: 'a good english speaker, too.',
+                    remark: 'hank test, create a feedback'
+                }])
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(201);
+                    res.should.have.header("Location");
+                    res.type.should.eql("application/json");
+                    done();
+                });
+        });
     });
 
 

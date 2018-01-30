@@ -24,13 +24,12 @@ const getFeedbackList = async ctx => {
 };
 
 const setFeedbackInfo = async ctx => {
-    //save feedback
     let {body} = ctx.request;
     let data = body.map(b => Object.assign({class_id: ctx.params.class_id}, b));
 
     try {
         let inserted = await knex('class_feedback')
-            .returning('user_id')
+            .returning('class_id')
             .insert(data)
         ;
 
