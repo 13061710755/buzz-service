@@ -8,26 +8,33 @@ const index = async ctx => {
         if (ctx.query.role) {
             filters['users.role'] = ctx.query.role;
         }
-        if (ctx.query.mobile) {
-            filters['user_profiles.mobile'] = ctx.query.mobile;
+
+        let search = selectUsers();
+
+        if (Object.keys(filters).length) {
+            search = search.where(filters);
         }
+
+        if (ctx.query.mobile) {
+            search = search.andWhere('user_profiles.mobile', 'like', `%${ctx.query.mobile}%`)
+        }
+
         if (ctx.query.email) {
-            filters['user_profiles.email'] = ctx.query.email;
+            search = search.andWhere('user_profiles.email', 'like', `%${ctx.query.email}%`)
         }
 
         if (ctx.query.wechat_name) {
-            filters['user_social_accounts.wechat_name'] = ctx.query.wechat_name;
+            search = search.andWhere('user_social_accounts.wechat_name', 'like', `%${ctx.query.wechat_name}%`);
         }
 
         if (ctx.query.display_name) {
-            filters['user_profiles.display_name'] = ctx.query.display_name;
+            search = search.andWhere('user_profiles.display_name', 'like', `%${ctx.query.display_name}%`);
         }
 
-        if (Object.keys(filters).length <= 0) {
-            ctx.body = await selectUsers();
-        } else {
-            ctx.body = await selectUsers().where(filters);
-        }
+        let result = await search;
+        console.log('result = ', result);
+        ctx.body = result;
+        // ctx.body = await search;
     } catch (error) {
         console.error(error);
     }

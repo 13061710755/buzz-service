@@ -88,7 +88,7 @@ describe("routes: users", () => {
         it('should allow search by wechat name', done => {
             chai
                 .request(server)
-                .get(`${PATH}?wechat_name=xxxx`)
+                .get(`${PATH}?wechat_name=xx`)
                 .end((err, res) => {
                     should.not.exist(err);
                     res.status.should.eql(200);
