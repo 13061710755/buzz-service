@@ -4,14 +4,29 @@ const config = require("../../knexfile")[env];
 const knex = require("knex")(config);
 const index = async ctx => {
     try {
-        let role = ctx.query.role;
+        let filters = {};
+        if (ctx.query.role) {
+            filters['users.role'] = ctx.query.role;
+        }
+        if (ctx.query.mobile) {
+            filters['user_profiles.mobile'] = ctx.query.mobile;
+        }
+        if (ctx.query.email) {
+            filters['user_profiles.email'] = ctx.query.email;
+        }
 
-        if (!role) {
+        if (ctx.query.wechat_name) {
+            filters['user_social_accounts.wechat_name'] = ctx.query.wechat_name;
+        }
+
+        if (ctx.query.display_name) {
+            filters['user_profiles.display_name'] = ctx.query.display_name;
+        }
+
+        if (Object.keys(filters).length <= 0) {
             ctx.body = await selectUsers();
         } else {
-            let students = await selectUsers().where({'users.role': role});
-            console.log(students);
-            ctx.body = students;
+            ctx.body = await selectUsers().where(filters);
         }
     } catch (error) {
         console.error(error);

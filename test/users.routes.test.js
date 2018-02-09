@@ -56,6 +56,61 @@ describe("routes: users", () => {
                     done();
                 });
         });
+
+        it('should allow search by mobile', done => {
+            chai
+                .request(server)
+                .get(`${PATH}?mobile=17717373367`)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(200);
+                    res.type.should.eql('application/json');
+                    res.body.length.should.eql(1);
+                    res.body[0].should.include.keys('user_id', 'name', 'created_at', 'role', 'avatar', 'facebook_id', 'wechat_data');
+                    done();
+                });
+        });
+
+        it('should allow search by email', done => {
+            chai
+                .request(server)
+                .get(`${PATH}?email=jie.tian@hotmail.com`)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(200);
+                    res.type.should.eql('application/json');
+                    res.body.length.should.eql(1);
+                    res.body[0].should.include.keys('user_id', 'name', 'created_at', 'role', 'avatar', 'facebook_id', 'wechat_data');
+                    done();
+                });
+        });
+
+        it('should allow search by wechat name', done => {
+            chai
+                .request(server)
+                .get(`${PATH}?wechat_name=xxxx`)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(200);
+                    res.type.should.eql('application/json');
+                    res.body.length.should.eql(1);
+                    res.body[0].should.include.keys('user_id', 'name', 'created_at', 'role', 'avatar', 'facebook_id', 'wechat_data');
+                    done();
+                });
+        });
+
+        it('should allow search by display_name', done => {
+            chai
+                .request(server)
+                .get(`${PATH}?display_name=zzzz`)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(200);
+                    res.type.should.eql('application/json');
+                    res.body.length.should.eql(0);
+                    done();
+                });
+        });
     });
 
     describe(`GET ${PATH}/:user_id`, () => {
