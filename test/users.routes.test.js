@@ -41,7 +41,22 @@ describe("routes: users", () => {
                 });
         });
     });
-    /** every subsequent test must be added here !! **/
+
+    describe(`GET ${PATH}?role=s`, () => {
+        it('should return all the students', done => {
+            chai
+                .request(server)
+                .get(`${PATH}?role=s`)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(200);
+                    res.type.should.eql('application/json');
+                    res.body.length.should.eql(1);
+                    res.body[0].should.include.keys('user_id', 'name', 'created_at', 'role', 'avatar', 'facebook_id', 'wechat_data');
+                    done();
+                });
+        });
+    });
 
     describe(`GET ${PATH}/:user_id`, () => {
             it("should return a single user", done => {
