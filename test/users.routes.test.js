@@ -36,7 +36,7 @@ describe("routes: users", () => {
                     res.status.should.eql(200);
                     res.type.should.eql("application/json");
                     res.body.length.should.eql(3);
-                    res.body[0].should.include.keys("user_id", "name", "created_at", "role", "avatar", "facebook_id", "wechat_data");
+                    res.body[0].should.include.keys("user_id", "name", "created_at", "role", "avatar", "facebook_id", "wechat_data", "class_hours");
                     done();
                 });
         });
