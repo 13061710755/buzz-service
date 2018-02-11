@@ -5,6 +5,9 @@ exports.up = function (knex, Promise) {
         table.enum('type', ['h']);
         table.enum('event', ['charge', 'consume']);
         table.decimal('amount', 8, 2);
+
+        table.foreign('user_id').references('users.user_id');
+        table.primary(['user_id'])
     });
 };
 

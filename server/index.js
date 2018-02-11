@@ -6,6 +6,7 @@ const companionClassSchedule = require('./routes/companionClassSchedule.routes')
 const classSchedule = require('./routes/classSchedule.routes');
 const monitorsRoutes = require('./routes/monitors.routes');
 const feedbackRoutes = require('./routes/feedback.routes');
+const userBalanceRoutes = require('./routes/user-balance.routes');
 const bodyParser = require("koa-bodyparser");
 
 const app = new Koa();
@@ -18,6 +19,7 @@ app.use(companionClassSchedule.routes());
 app.use(feedbackRoutes.routes());
 app.use(classSchedule.routes());
 app.use(monitorsRoutes.routes());
+app.use(userBalanceRoutes.routes());
 const server = app.listen(PORT).on("error", err => {
     console.error(err);
 });

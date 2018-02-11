@@ -11,7 +11,7 @@ exports.up = function (knex, Promise) {
         table.string('location');
         table.string('avatar');
 
-        // table.foreign('user_id').references('users.user_id');
+        table.foreign('user_id').references('users.user_id');
     })
 };
 
