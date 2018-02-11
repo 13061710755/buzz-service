@@ -37,7 +37,7 @@ module.exports = {
         }
     },
 
-    staging: {
+    staging_mysql: {
         client: 'mysql',
         connection: process.env.CLEARDB_DATABASE_URL,
         migrations: {
@@ -48,7 +48,7 @@ module.exports = {
         }
     },
 
-    staging_postgressql: {
+    staging: {
         client: 'postgresql',
         connection: {
             host: process.env.PG_HOST,
