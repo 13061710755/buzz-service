@@ -153,7 +153,8 @@ const create = async ctx => {
             facebook_id: body.facebook_id || null,
             facebook_name: body.facebook_name || '',
             wechat_openid: body.wechat_openid || null,
-            wechat_unionid: body.wechat_unionid || null
+            wechat_unionid: body.wechat_unionid || null,
+            wechat_name: body.wechat_name || null
         });
 
         await trx.commit();
