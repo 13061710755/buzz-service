@@ -45,4 +45,21 @@ describe("routes: user balance", () => {
     });
     /** every subsequent test must be added here !! **/
 
+    describe(`DELETE ${PATH}/:user_id`, () => {
+        it('can consume class hours of a user', done => {
+            chai
+                .request(server)
+                .del(`${PATH}/1`)
+                .send({
+                    class_hours: 3
+                })
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(201);
+                    res.type.should.eql('application/json');
+                    res.body.should.eql({class_hours: -3});
+                    done();
+                });
+        });
+    });
 });
