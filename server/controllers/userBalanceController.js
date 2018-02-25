@@ -31,7 +31,7 @@ const charge = async ctx => {
 
         let newClassHours = {
             user_id: ctx.params.user_id,
-            class_hours: body.class_hours + (currentClassHours.length > 0 ? currentClassHours[0].class_hours : 0)
+            class_hours: Number(body.class_hours) + (currentClassHours.length > 0 ? Number(currentClassHours[0].class_hours) : 0)
         };
 
         if (currentClassHours.length > 0) {
@@ -77,7 +77,7 @@ const consume = async ctx => {
 
         let newClassHours = {
             user_id: ctx.params.user_id,
-            class_hours: (currentClassHours.length > 0 ? currentClassHours[0].class_hours : 0) - body.class_hours
+            class_hours: (currentClassHours.length > 0 ? currentClassHours[0].class_hours : 0) - Number(body.class_hours)
         };
 
         if (currentClassHours.length > 0) {

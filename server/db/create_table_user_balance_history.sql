@@ -5,7 +5,7 @@ create table user_balance_history (
     event enum('charge', 'consume'),
     amount decimal,
 
-    primary key (user_id),
+    primary key (user_id, timestamp),
 
     foreign key fk_user(user_id)
     references users(user_id)
