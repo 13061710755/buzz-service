@@ -1,6 +1,6 @@
 create table student_class_schedule (
 	user_id int(11) not null,
-    class_id bigint not null,
+    class_id bigint,
     start_time datetime,
     end_time datetime,
     status enum('booking', 'cancelled', 'confirmed', 'ready', 'started', 'ended', 'terminated'),
