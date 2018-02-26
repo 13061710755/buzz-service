@@ -101,5 +101,19 @@ describe("routes: student class schedule", () => {
                     done();
                 })
         });
+
+        it('should throw error if trying to cancel a non-exist booking', done => {
+            chai
+                .request(server)
+                .put(`${PATH}/1`)
+                .send({
+                    start_time: new Date(2018, 2, 26, 9, 0)
+                })
+                .end((err, res) => {
+                    should.exist(err);
+                    res.status.should.eql(500);
+                    res.type.should.
+                });
+        })
     })
 });

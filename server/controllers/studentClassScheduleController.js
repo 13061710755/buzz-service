@@ -103,9 +103,10 @@ const create = async ctx => {
 const cancel = async ctx => {
     try {
         let {body} = ctx.request;
+        let startTime = new Date(body.start_time).getTime();
         let filter = {
             'user_id': ctx.params.user_id,
-            'start_time': new Date(body.start_time).getTime()
+            'start_time': startTime
         };
         let res = await knex('student_class_schedule').where(filter).update({
             'status': 'cancelled'
@@ -115,6 +116,8 @@ const cancel = async ctx => {
             ctx.body = (await knex('student_class_schedule')
                 .where(filter)
                 .select('user_id', 'status'))[0];
+        } else if (res === 0) {
+            throw new Error('trying to cancel a non-exist event @ ' + startTime);
         } else {
             throw new Error(res);
         }

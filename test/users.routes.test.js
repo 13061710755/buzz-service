@@ -152,7 +152,8 @@ describe("routes: users", () => {
                     facebook_name: "John Doe",
                     role: 's',
                     name: 'John Doe',
-                    user_id: '99'
+                    user_id: '99',
+                    wechat_name: 'xxx yyy'
                 })
                 .end((err, res) => {
                     should.not.exist(err);
@@ -160,7 +161,18 @@ describe("routes: users", () => {
                     res.should.have.header("Location");
                     res.type.should.eql("application/json");
                     res.body.should.be.a("number");
-                    done();
+
+                    chai
+                        .request(server)
+                        .get(`${PATH}/${res.body}`)
+                        .end((err, res) => {
+                            should.not.exist(err);
+                            res.status.should.eql(200);
+                            res.type.should.eql("application/json");
+                            res.body.should.include.keys("user_id", "name", "created_at", "role", "avatar", "facebook_id", "wechat_data");
+                            res.body.wechat_name.should.eql('xxx yyy');
+                            done();
+                        });
                 });
         });
         it("should return an error when the resource already exists", done => {
