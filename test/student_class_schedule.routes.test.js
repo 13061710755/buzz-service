@@ -112,7 +112,8 @@ describe("routes: student class schedule", () => {
                 .end((err, res) => {
                     should.exist(err);
                     res.status.should.eql(500);
-                    res.type.should.
+
+                    done();
                 });
         })
     })

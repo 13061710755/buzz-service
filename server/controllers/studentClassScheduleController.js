@@ -2,6 +2,8 @@ const promisify = require('../common/promisify')
 const env = process.env.NODE_ENV || "test";
 const config = require("../../knexfile")[env];
 const knex = require("knex")(config);
+const moment = require('moment');
+
 let uniformTime = function (theStartTime, theEndTime) {
     let start_time = theStartTime;
     if (start_time) {
@@ -103,7 +105,7 @@ const create = async ctx => {
 const cancel = async ctx => {
     try {
         let {body} = ctx.request;
-        let startTime = new Date(body.start_time).getTime();
+        let startTime = moment(body.start_time).format('YYYY-MM-DD hh:mm:ss');
         let filter = {
             'user_id': ctx.params.user_id,
             'start_time': startTime
