@@ -122,7 +122,8 @@ describe("routes: users", () => {
                         should.not.exist(err);
                         res.status.should.eql(200);
                         res.type.should.eql("application/json");
-                        res.body.should.include.keys("user_id", "name", "created_at", "role", "avatar", "facebook_id", "wechat_data");
+                        res.body.should.include.keys("user_id", "name", "created_at", "role", "avatar", "facebook_id", "wechat_data", "level");
+                        res.body.level.should.eql('A');
                         done();
                     });
             });
