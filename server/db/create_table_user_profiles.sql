@@ -9,6 +9,8 @@ create table user_profiles (
     language varchar(5) default 'en-US',
     location text,
     avatar text,
+    grade varchar(255),
+    parent_name varchar(255),
 
     foreign key fk_user(user_id)
     references users(user_id)

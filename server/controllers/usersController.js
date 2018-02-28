@@ -32,7 +32,6 @@ const index = async ctx => {
         }
 
         let result = await search;
-        console.log('result = ', result);
         ctx.body = result;
         // ctx.body = await search;
     } catch (error) {
@@ -68,7 +67,7 @@ let selectUsers = function () {
         .leftJoin('user_balance', 'users.user_id', 'user_balance.user_id')
         .leftJoin('user_placement_tests', 'users.user_id', 'user_placement_tests.user_id')
         .groupByRaw('users.user_id')
-        .select('users.user_id as user_id', 'users.name as name', 'users.created_at as created_at', 'users.role as role', 'user_profiles.avatar as avatar', 'user_profiles.display_name as display_name', 'user_profiles.gender as gender', 'user_profiles.date_of_birth as date_of_birth', 'user_profiles.mobile as mobile', 'user_profiles.email as email', 'user_profiles.language as language', 'user_profiles.location as location', 'user_profiles.description as description', 'user_social_accounts.facebook_id as facebook_id', 'user_social_accounts.wechat_data as wechat_data', 'user_social_accounts.facebook_name as facebook_name', 'user_social_accounts.wechat_name as wechat_name', 'user_balance.class_hours as class_hours', 'user_placement_tests.level as level', knex.raw('group_concat(user_interests.interest) as interests'));
+        .select('users.user_id as user_id', 'users.name as name', 'users.created_at as created_at', 'users.role as role', 'user_profiles.avatar as avatar', 'user_profiles.display_name as display_name', 'user_profiles.gender as gender', 'user_profiles.date_of_birth as date_of_birth', 'user_profiles.mobile as mobile', 'user_profiles.email as email', 'user_profiles.language as language', 'user_profiles.location as location', 'user_profiles.description as description', 'user_profiles.grade as grade', 'user_profiles.parent_name as parent_name', 'user_social_accounts.facebook_id as facebook_id', 'user_social_accounts.wechat_data as wechat_data', 'user_social_accounts.facebook_name as facebook_name', 'user_social_accounts.wechat_name as wechat_name', 'user_balance.class_hours as class_hours', 'user_placement_tests.level as level', knex.raw('group_concat(user_interests.interest) as interests'));
 };
 const getByFacebookId = async ctx => {
     try {
@@ -198,7 +197,7 @@ function makeUpdations(updations) {
     let result = {};
 
     Object.keys(updations).map(prop => {
-        if (updations[prop]) {
+        if (typeof updations[prop] !== 'undefined') {
             result[prop] = updations[prop];
         }
     });
@@ -228,7 +227,9 @@ let updateUserProfilesTable = async function (body, trx, ctx) {
         mobile: body.mobile,
         email: body.email,
         language: body.language,
-        location: body.location
+        location: body.location,
+        grade: body.grade,
+        parent_name: body.parent_name,
     });
     if (Object.keys(profiles).length > 0) {
         const userProfile = await trx('user_profiles')
