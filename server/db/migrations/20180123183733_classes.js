@@ -7,6 +7,7 @@ exports.up = function (knex, Promise) {
         table.enum('status', ['opened', 'cancelled', 'ready', 'started', 'ended']);
         table.string('name');
         table.text('remark');
+        table.string('topic');
     })
 };
 

@@ -2,7 +2,7 @@ const promisify = require('../common/promisify')
 const env = process.env.NODE_ENV || "test";
 const config = require("../../knexfile")[env];
 const knex = require("knex")(config);
-const index = async ctx => {
+const search = async ctx => {
     try {
         let filters = {};
         if (ctx.query.role) {
@@ -291,4 +291,4 @@ const update = async ctx => {
         ctx.body = error;
     }
 };
-module.exports = {index, show, getByFacebookId, getByWechat, create, signIn, update};
+module.exports = {index: search, show, getByFacebookId, getByWechat, create, signIn, update};

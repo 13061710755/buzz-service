@@ -21,4 +21,9 @@ const listSuggested = async ctx => {
     }
 };
 
-module.exports = {listSuggested};
+const list = async ctx => {
+    ctx.body = await knex('classes')
+        .select('class_id', 'adviser_id', 'start_time', 'end_time', 'status', 'name', 'remark', 'topic');
+};
+
+module.exports = {listSuggested, list};

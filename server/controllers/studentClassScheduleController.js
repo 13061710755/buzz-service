@@ -106,6 +106,11 @@ const cancel = async ctx => {
     try {
         let {body} = ctx.request;
         let startTime = moment(body.start_time).format('YYYY-MM-DD hh:mm:ss');
+
+        if (!process.env.NODE_ENV || process.env.NODE_ENV === 'test') {
+            startTime = new Date(body.start_time).getTime();
+        }
+
         let filter = {
             'user_id': ctx.params.user_id,
             'start_time': startTime

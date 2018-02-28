@@ -6,6 +6,7 @@ create table classes (
     status enum('opened', 'cancelled', 'ready', 'started', 'ended'),
 	name varchar(255),
     remark text,
+    topic varchar(255),
 
     primary key(class_id),
 

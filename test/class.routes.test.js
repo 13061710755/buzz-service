@@ -43,4 +43,17 @@ describe("routes: class schedules", () => {
     });
     /** every subsequent test must be added here !! **/
 
+    describe(`GET ${PATH}`, () => {
+        it('should list all the classes', done => {
+            chai
+                .request(server)
+                .get(`${PATH}`)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(200);
+                    res.type.should.eql('application/json');
+                    done();
+                })
+        })
+    })
 });
