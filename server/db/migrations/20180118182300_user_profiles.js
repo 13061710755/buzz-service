@@ -10,8 +10,10 @@ exports.up = function (knex, Promise) {
         table.string('language').defaultTo('en-US');
         table.string('location');
         table.string('avatar');
+        table.string('grade');
+        table.string('parent_name');
 
-        // table.foreign('user_id').references('users.user_id');
+        table.foreign('user_id').references('users.user_id');
     })
 };
 

@@ -36,12 +36,82 @@ describe("routes: users", () => {
                     res.status.should.eql(200);
                     res.type.should.eql("application/json");
                     res.body.length.should.eql(3);
-                    res.body[0].should.include.keys("user_id", "name", "created_at", "role", "avatar", "facebook_id", "wechat_data");
+                    res.body[0].should.include.keys("user_id", "name", "created_at", "role", "avatar", "facebook_id", "wechat_data", "class_hours");
                     done();
                 });
         });
     });
-    /** every subsequent test must be added here !! **/
+
+    describe(`GET ${PATH}?role=s`, () => {
+        it('should return all the students', done => {
+            chai
+                .request(server)
+                .get(`${PATH}?role=s`)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(200);
+                    res.type.should.eql('application/json');
+                    res.body.length.should.eql(1);
+                    res.body[0].should.include.keys('user_id', 'name', 'created_at', 'role', 'avatar', 'facebook_id', 'wechat_data');
+                    done();
+                });
+        });
+
+        it('should allow search by mobile', done => {
+            chai
+                .request(server)
+                .get(`${PATH}?mobile=17717373367`)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(200);
+                    res.type.should.eql('application/json');
+                    res.body.length.should.eql(1);
+                    res.body[0].should.include.keys('user_id', 'name', 'created_at', 'role', 'avatar', 'facebook_id', 'wechat_data');
+                    done();
+                });
+        });
+
+        it('should allow search by email', done => {
+            chai
+                .request(server)
+                .get(`${PATH}?email=jie.tian@hotmail.com`)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(200);
+                    res.type.should.eql('application/json');
+                    res.body.length.should.eql(1);
+                    res.body[0].should.include.keys('user_id', 'name', 'created_at', 'role', 'avatar', 'facebook_id', 'wechat_data');
+                    done();
+                });
+        });
+
+        it('should allow search by wechat name', done => {
+            chai
+                .request(server)
+                .get(`${PATH}?wechat_name=xx`)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(200);
+                    res.type.should.eql('application/json');
+                    res.body.length.should.eql(1);
+                    res.body[0].should.include.keys('user_id', 'name', 'created_at', 'role', 'avatar', 'facebook_id', 'wechat_data');
+                    done();
+                });
+        });
+
+        it('should allow search by display_name', done => {
+            chai
+                .request(server)
+                .get(`${PATH}?display_name=zzzz`)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(200);
+                    res.type.should.eql('application/json');
+                    res.body.length.should.eql(0);
+                    done();
+                });
+        });
+    });
 
     describe(`GET ${PATH}/:user_id`, () => {
             it("should return a single user", done => {
@@ -52,7 +122,8 @@ describe("routes: users", () => {
                         should.not.exist(err);
                         res.status.should.eql(200);
                         res.type.should.eql("application/json");
-                        res.body.should.include.keys("user_id", "name", "created_at", "role", "avatar", "facebook_id", "wechat_data");
+                        res.body.should.include.keys("user_id", "name", "created_at", "role", "avatar", "facebook_id", "wechat_data", "level");
+                        res.body.level.should.eql('A');
                         done();
                     });
             });
@@ -82,7 +153,8 @@ describe("routes: users", () => {
                     facebook_name: "John Doe",
                     role: 's',
                     name: 'John Doe',
-                    user_id: '99'
+                    user_id: '99',
+                    wechat_name: 'xxx yyy'
                 })
                 .end((err, res) => {
                     should.not.exist(err);
@@ -90,7 +162,18 @@ describe("routes: users", () => {
                     res.should.have.header("Location");
                     res.type.should.eql("application/json");
                     res.body.should.be.a("number");
-                    done();
+
+                    chai
+                        .request(server)
+                        .get(`${PATH}/${res.body}`)
+                        .end((err, res) => {
+                            should.not.exist(err);
+                            res.status.should.eql(200);
+                            res.type.should.eql("application/json");
+                            res.body.should.include.keys("user_id", "name", "created_at", "role", "avatar", "facebook_id", "wechat_data");
+                            res.body.wechat_name.should.eql('xxx yyy');
+                            done();
+                        });
                 });
         });
         it("should return an error when the resource already exists", done => {

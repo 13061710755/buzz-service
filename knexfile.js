@@ -48,7 +48,7 @@ module.exports = {
         }
     },
 
-    staging_postgressql: {
+    staging_postgresql: {
         client: 'postgresql',
         connection: {
             host: process.env.PG_HOST,

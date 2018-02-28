@@ -2,6 +2,8 @@ const promisify = require('../common/promisify')
 const env = process.env.NODE_ENV || "test";
 const config = require("../../knexfile")[env];
 const knex = require("knex")(config);
+const moment = require('moment');
+
 let uniformTime = function (theStartTime, theEndTime) {
     let start_time = theStartTime;
     if (start_time) {
@@ -103,9 +105,10 @@ const create = async ctx => {
 const cancel = async ctx => {
     try {
         let {body} = ctx.request;
+        let startTime = moment(body.start_time).format('YYYY-MM-DD hh:mm:ss');
         let filter = {
             'user_id': ctx.params.user_id,
-            'start_time': new Date(body.start_time).getTime()
+            'start_time': startTime
         };
         let res = await knex('student_class_schedule').where(filter).update({
             'status': 'cancelled'
@@ -115,6 +118,8 @@ const cancel = async ctx => {
             ctx.body = (await knex('student_class_schedule')
                 .where(filter)
                 .select('user_id', 'status'))[0];
+        } else if (res === 0) {
+            throw new Error('trying to cancel a non-exist event @ ' + startTime);
         } else {
             throw new Error(res);
         }
