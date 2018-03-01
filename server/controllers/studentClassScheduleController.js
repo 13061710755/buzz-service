@@ -34,6 +34,10 @@ const list = async ctx => {
     }
 };
 
+const listAll = async ctx => {
+    ctx.body = await selectSchedules();
+}
+
 let selectSchedules = function () {
     return knex('users')
         .leftJoin('student_class_schedule', 'users.user_id', 'student_class_schedule.user_id')
@@ -133,4 +137,4 @@ const cancel = async ctx => {
         ctx.throw(500, ex);
     }
 };
-module.exports = {list, create, cancel};
+module.exports = {list, create, cancel, listAll};

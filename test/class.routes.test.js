@@ -56,4 +56,44 @@ describe("routes: class schedules", () => {
                 })
         })
     })
+
+    describe(`POST ${PATH}`, () => {
+        it('should create a class', done => {
+            chai
+                .request(server)
+                .post(`${PATH}`)
+                .send({
+                    adviser_id: 1,
+                    start_time: '20180302T10:00:00Z',
+                    end_time: '20180302T11:00:00Z',
+                    status: 'opened',
+                    name: 'Test class',
+                    remark: 'xxx',
+                    topic: 'animal',
+                    students: [1, 2, 3]
+                })
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(201);
+                    res.type.should.eql('application/json');
+                    res.body.adviser_id.should.eql(1);
+                    res.body.end_time.should.eql('20180302T11:00:00Z');
+                    res.body.name.should.eql('Test class');
+                    res.body.start_time.should.eql('20180302T10:00:00Z');
+                    res.body.status.should.eql('opened');
+                    res.body.topic.should.eql('animal');
+
+                    chai
+                        .request(server)
+                        .get(`/api/v1/student-class-schedule`)
+                        .end((err, res) => {
+                            should.not.exist(err);
+                            res.status.should.eql(200);
+                            res.type.should.eql('application/json');
+                            res.body.length.should.gt(3);
+                            done();
+                        })
+                })
+        })
+    })
 });

@@ -4,5 +4,6 @@ const classScheduleController = require("../controllers/classScheduleController"
 const BASE_URL = `/api/v1/class-schedule`;
 router.get(`${BASE_URL}/suggested-classes`, classScheduleController.listSuggested);
 router.get(`${BASE_URL}`, classScheduleController.list);
+router.post(`${BASE_URL}`, classScheduleController.upsert);
 
 module.exports = router;

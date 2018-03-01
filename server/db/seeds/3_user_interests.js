@@ -4,7 +4,7 @@ exports.seed = function (knex, Promise) {
         .then(function () {
             return knex('user_interests').insert([
                 {user_id: 1, interest: 'universe'},
-                {user_id: 2, interest: 'busines'}
+                {user_id: 2, interest: 'business'}
             ]);
         });
 };

@@ -21,9 +21,63 @@ const listSuggested = async ctx => {
     }
 };
 
-const list = async ctx => {
-    ctx.body = await knex('classes')
+function selectClasses() {
+    return knex('classes')
         .select('class_id', 'adviser_id', 'start_time', 'end_time', 'status', 'name', 'remark', 'topic');
+}
+
+const list = async ctx => {
+    ctx.body = await selectClasses();
 };
 
-module.exports = {listSuggested, list};
+const upsert = async ctx => {
+    let {body} = ctx.request;
+
+    let trx = await promisify(knex.transaction);
+
+    try {
+        let classInfo = await trx('classes')
+            .returning('class_id')
+            .insert({
+                adviser_id: body.adviser_id,
+                start_time: body.start_time,
+                end_time: body.end_time,
+                status: body.status,
+                name: body.name,
+                remark: body.remark,
+                topic: body.topic,
+
+            })
+            .where({class_id: body.class_id});
+
+        let studentSchedules = body.students.map(studentId => {
+            return {
+                user_id: studentId,
+                class_id: classInfo[0],
+                start_time: body.start_time,
+                end_time: body.end_time,
+                status: 'confirmed'
+            };
+        });
+        
+        await trx('student_class_schedule')
+            .returning('start_time')
+            .insert(studentSchedules)
+
+        await trx.commit();
+
+        ctx.status = 201;
+        ctx.set("Location", `${ctx.request.URL}`);
+        ctx.body = (await selectClasses().where({class_id: classInfo[0]}))[0];
+    } catch (error) {
+        console.error(error);
+
+        await trx.rollback();
+        ctx.status = 500;
+        ctx.body = {
+            error: "Save class failed!"
+        };
+    }
+}
+
+module.exports = {listSuggested, list, upsert};

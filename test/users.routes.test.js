@@ -282,7 +282,7 @@ describe("routes: users", () => {
                     name: 'changed',
                     display_name: 'changed',
                     facebook_name: 'changed',
-                    interests: ['football', 'volleyball']
+                    interests: ['business', 'art']
                 })
                 .end((err, res) => {
                     should.not.exist(err);
@@ -299,7 +299,7 @@ describe("routes: users", () => {
                             res.body.name.should.eql('changed');
                             res.body.display_name.should.eql('changed');
                             res.body.facebook_name.should.eql('changed');
-                            res.body.interests.should.eql('football,volleyball');
+                            res.body.interests.should.eql('art,business');
 
                             done();
                         });
