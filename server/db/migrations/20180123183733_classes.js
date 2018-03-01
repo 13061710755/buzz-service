@@ -8,6 +8,7 @@ exports.up = function (knex, Promise) {
         table.string('name');
         table.text('remark');
         table.string('topic');
+        table.text('exercises');
     })
 };
 

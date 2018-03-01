@@ -3,8 +3,8 @@ exports.seed = function (knex, Promise) {
     return knex('user_interests').del()
         .then(function () {
             return knex('user_interests').insert([
-                {user_id: 1, interest: 'football'},
-                {user_id: 2, interest: 'volleyball'}
+                {user_id: 1, interest: 'universe'},
+                {user_id: 2, interest: 'busines'}
             ]);
         });
 };

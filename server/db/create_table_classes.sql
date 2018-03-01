@@ -7,6 +7,7 @@ create table classes (
 	name varchar(255),
     remark text,
     topic varchar(255),
+    exercises text,
 
     primary key(class_id),
 
