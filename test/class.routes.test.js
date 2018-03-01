@@ -52,6 +52,7 @@ describe("routes: class schedules", () => {
                     should.not.exist(err);
                     res.status.should.eql(200);
                     res.type.should.eql('application/json');
+                    res.body[0].should.include.keys('room_url');
                     done();
                 })
         })
