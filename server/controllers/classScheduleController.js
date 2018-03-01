@@ -23,7 +23,7 @@ const listSuggested = async ctx => {
 
 function selectClasses() {
     return knex('classes')
-        .select('class_id', 'adviser_id', 'start_time', 'end_time', 'status', 'name', 'remark', 'topic', 'room_url');
+        .select('class_id', 'adviser_id', 'start_time', 'end_time', 'status', 'name', 'remark', 'topic', 'room_url', 'exercises');
 }
 
 const list = async ctx => {
