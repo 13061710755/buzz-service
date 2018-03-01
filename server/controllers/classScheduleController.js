@@ -36,20 +36,30 @@ const upsert = async ctx => {
     let trx = await promisify(knex.transaction);
 
     try {
-        let classIds = await trx('classes')
-            .returning('class_id')
-            .insert({
-                adviser_id: body.adviser_id,
-                start_time: body.start_time,
-                end_time: body.end_time,
-                status: body.status,
-                name: body.name,
-                remark: body.remark,
-                topic: body.topic,
-                room_url: body.room_url,
-                exercises: body.exercises,
-            })
-            .where({class_id: body.class_id});
+        let classIds = [body.class_id];
+        
+        let data = {
+            adviser_id: body.adviser_id,
+            start_time: body.start_time,
+            end_time: body.end_time,
+            status: body.status,
+            name: body.name,
+            remark: body.remark,
+            topic: body.topic,
+            room_url: body.room_url,
+            exercises: body.exercises,
+        };
+
+        if (body.class_id) {
+            await trx('classes')
+                .returning('class_id')
+                .update(data)
+                .where({class_id: body.class_id});
+        } else {
+            classIds = await trx('classes')
+                .returning('class_id')
+                .insert(data);
+        }
 
         let studentSchedules = body.students.map(studentId => {
             return {
