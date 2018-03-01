@@ -9,6 +9,7 @@ exports.up = function (knex, Promise) {
         table.text('remark');
         table.string('topic');
         table.text('exercises');
+        table.string('room_url');
     })
 };
 

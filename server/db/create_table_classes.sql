@@ -9,6 +9,7 @@ create table classes (
     remark text,
     topic varchar(255),
     exercises text,
+    room_url varchar(255),
 
     primary key(class_id),
 

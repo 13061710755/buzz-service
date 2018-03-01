@@ -46,7 +46,8 @@ const upsert = async ctx => {
                 name: body.name,
                 remark: body.remark,
                 topic: body.topic,
-
+                room_url: body.room_url,
+                exercises: body.exercises,
             })
             .where({class_id: body.class_id});
 

@@ -71,7 +71,9 @@ describe("routes: class schedules", () => {
                     name: 'Test class',
                     remark: 'xxx',
                     topic: 'animal',
-                    students: [1, 2, 3]
+                    students: [1, 2, 3],
+                    exercises: '["yyy","zzz"]',
+                    room_url: 'http://www.baidu.com'
                 })
                 .end((err, res) => {
                     should.not.exist(err);
