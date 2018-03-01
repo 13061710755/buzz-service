@@ -36,7 +36,7 @@ const upsert = async ctx => {
     let trx = await promisify(knex.transaction);
 
     try {
-        let classInfo = await trx('classes')
+        let classIds = await trx('classes')
             .returning('class_id')
             .insert({
                 adviser_id: body.adviser_id,
@@ -53,22 +53,36 @@ const upsert = async ctx => {
         let studentSchedules = body.students.map(studentId => {
             return {
                 user_id: studentId,
-                class_id: classInfo[0],
+                class_id: classIds[0],
                 start_time: body.start_time,
                 end_time: body.end_time,
                 status: 'confirmed'
             };
         });
-        
+
+        let companionSchedules = body.companions.map(companionId => {
+            return {
+                user_id: companionId,
+                class_id: classIds[0],
+                start_time: body.start_time,
+                end_time: body.end_time,
+                status: 'confirmed'
+            }
+        })
+
         await trx('student_class_schedule')
             .returning('start_time')
             .insert(studentSchedules)
+
+        await trx('companion_class_schedule')
+            .returning('start_time')
+            .insert(companionSchedules)
 
         await trx.commit();
 
         ctx.status = 201;
         ctx.set("Location", `${ctx.request.URL}`);
-        ctx.body = (await selectClasses().where({class_id: classInfo[0]}))[0];
+        ctx.body = (await selectClasses().where({class_id: classIds[0]}))[0];
     } catch (error) {
         console.error(error);
 

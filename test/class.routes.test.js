@@ -64,6 +64,7 @@ describe("routes: class schedules", () => {
                 .post(`${PATH}`)
                 .send({
                     adviser_id: 1,
+                    companions: [4, 5, 6],
                     start_time: '20180302T10:00:00Z',
                     end_time: '20180302T11:00:00Z',
                     status: 'opened',
@@ -91,7 +92,17 @@ describe("routes: class schedules", () => {
                             res.status.should.eql(200);
                             res.type.should.eql('application/json');
                             res.body.length.should.gt(3);
-                            done();
+
+                            chai.request(server)
+                                .get('/api/v1/companion-class-schedule')
+                                .end((err, res) => {
+                                    should.not.exist(err);
+                                    res.status.should.eql(200);
+                                    res.type.should.eql('application/json');
+                                    res.body.length.should.gt(3);
+
+                                    done();
+                                })
                         })
                 })
         })
