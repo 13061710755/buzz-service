@@ -25,9 +25,9 @@ const list = async ctx => {
         let {start_time, end_time} = uniformTime(ctx.query.start_time, ctx.query.end_time);
 
         ctx.body = await selectSchedules()
-            .where('users.user_id', ctx.params.user_id)
-            .andWhere('student_class_schedule.start_time', '>=', start_time)
-            .andWhere('student_class_schedule.end_time', '<=', end_time);
+            .where('user_id', ctx.params.user_id)
+            .andWhere('start_time', '>=', start_time)
+            .andWhere('end_time', '<=', end_time);
     } catch (error) {
         console.error(error);
         ctx.throw(500, error);
@@ -39,9 +39,8 @@ const listAll = async ctx => {
 }
 
 let selectSchedules = function () {
-    return knex('users')
-        .leftJoin('student_class_schedule', 'users.user_id', 'student_class_schedule.user_id')
-        .select('users.user_id as user_id', 'student_class_schedule.status as status', 'student_class_schedule.start_time as start_time', 'student_class_schedule.end_time as end_time');
+    return knex('student_class_schedule')
+        .select('user_id', 'class_id', 'status', 'start_time', 'end_time');
 };
 
 let checkTimeConflictsWithDB = async function (user_id, time, start_time, end_time) {

@@ -59,7 +59,7 @@ describe("routes: class schedules", () => {
     })
 
     describe(`POST ${PATH}`, () => {
-        it('should create a class', done => {
+        it('should create a class and then update it without error', done => {
             chai
                 .request(server)
                 .post(`${PATH}`)
@@ -87,6 +87,8 @@ describe("routes: class schedules", () => {
                     res.body.status.should.eql('opened');
                     res.body.topic.should.eql('animal');
 
+                    let classId = res.body.class_id;
+
                     chai
                         .request(server)
                         .get(`/api/v1/student-class-schedule`)
@@ -96,6 +98,8 @@ describe("routes: class schedules", () => {
                             res.type.should.eql('application/json');
                             res.body.length.should.gt(3);
 
+                            let studentClassSchedules = res.body.length;
+
                             chai.request(server)
                                 .get('/api/v1/companion-class-schedule')
                                 .end((err, res) => {
@@ -103,8 +107,46 @@ describe("routes: class schedules", () => {
                                     res.status.should.eql(200);
                                     res.type.should.eql('application/json');
                                     res.body.length.should.gt(3);
+                                    let companionClassSchedules = res.body.length;
 
-                                    done();
+                                    chai.request(server)
+                                        .post(`${PATH}`)
+                                        .send({
+                                            class_id: classId,
+                                            adviser_id: 1,
+                                            companions: [],
+                                            start_time: '20180302T10:00:00Z',
+                                            end_time: '20180302T11:00:00Z',
+                                            status: 'opened',
+                                            name: 'Test class',
+                                            remark: 'xxx',
+                                            topic: 'animal',
+                                            students: [],
+                                            exercises: '["yyy","zzz"]',
+                                            room_url: 'http://www.baidu.com'
+                                        })
+                                        .end((err, res) => {
+                                            should.not.exist(err);
+                                            res.status.should.eql(200);
+
+                                            chai.request(server)
+                                                .get(`/api/v1/student-class-schedule`)
+                                                .end((err, res) => {
+                                                    should.not.exist(err);
+                                                    console.log('checking student schedules');
+                                                    console.log(res.body);
+                                                    res.body.length.should.eql(studentClassSchedules - 3);
+
+                                                    chai.request(server)
+                                                        .get(`/api/v1/companion-class-schedule`)
+                                                        .end((err, res) => {
+                                                            should.not.exist(err);
+                                                            console.log('checking companion schedules');
+                                                            res.body.length.should.eql(companionClassSchedules - 3);
+                                                            done();
+                                                        })
+                                                })
+                                        })
                                 })
                         })
                 })

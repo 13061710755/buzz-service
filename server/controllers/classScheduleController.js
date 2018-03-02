@@ -36,6 +36,7 @@ const upsert = async ctx => {
     let trx = await promisify(knex.transaction);
 
     try {
+        console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
         let classIds = [body.class_id];
 
         let data = {
@@ -71,6 +72,7 @@ const upsert = async ctx => {
         })
 
         if (body.class_id) {
+            console.error('body class i d= ', body.class_id);
             await trx('classes')
                 .returning('class_id')
                 .update(data)
@@ -80,10 +82,15 @@ const upsert = async ctx => {
                 .select('user_id')
                 .where({class_id: body.class_id});
 
-            let toBeDeletedCompanionSchedules = originalCompanions.filter(c => companionSchedules.indexOf(c) < 0);
+            originalCompanions = originalCompanions.map(oc => oc.user_id);
+            console.log('original companions = ', originalCompanions);
+
+            let toBeDeletedCompanionSchedules = originalCompanions.filter(c => companionSchedules.map(cs => cs.user_id).indexOf(c) < 0);
+            console.log('tobedeleted companion = ', toBeDeletedCompanionSchedules);
 
             await trx('companion_class_schedule')
                 .where('user_id', 'in', toBeDeletedCompanionSchedules)
+                .andWhere({class_id: body.class_id})
                 .del();
 
             // New companionSchedules
@@ -93,11 +100,17 @@ const upsert = async ctx => {
                 .select('user_id')
                 .where({class_id: body.class_id});
 
-            let toBeDeletedStudentSchedules = originalStudents.filter(s => studentSchedules.indexOf(s) < 0);
-            await trx('student_class_schedule')
+            originalStudents = originalStudents.map(os => os.user_id);
+            console.log('original students = ', originalStudents)
+
+            let toBeDeletedStudentSchedules = originalStudents.filter(s => studentSchedules.map(ss => ss.user_id).indexOf(s) < 0);
+            console.log('tobedeleted sut = ', toBeDeletedStudentSchedules);
+            let result = await trx('student_class_schedule')
                 .where('user_id', 'in', toBeDeletedStudentSchedules)
+                .andWhere({class_id: body.class_id})
                 .del();
 
+            console.log('delete student schedule result = ', result);
             // New StudentSchedules
             studentSchedules = studentSchedules.filter(s => originalStudents.indexOf(s.user_id) < 0);
         } else {
@@ -126,7 +139,7 @@ const upsert = async ctx => {
 
         await trx.commit();
 
-        ctx.status = 201;
+        ctx.status = body.class_id ? 200 : 201;
         ctx.set("Location", `${ctx.request.URL}`);
         ctx.body = (await selectClasses().where({class_id: classIds[0]}))[0];
     } catch (error) {
