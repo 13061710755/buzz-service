@@ -23,7 +23,10 @@ const listSuggested = async ctx => {
 
 function selectClasses() {
     return knex('classes')
-        .select('class_id', 'adviser_id', 'start_time', 'end_time', 'status', 'name', 'remark', 'topic', 'room_url', 'exercises');
+        .leftJoin('companion_class_schedule', 'classes.class_id', 'companion_class_schedule.class_id')
+        .leftJoin('student_class_schedule', 'classes.class_id', 'student_class_schedule.class_id')
+        .groupByRaw('classes.class_id')
+        .select('classes.class_id as class_id', 'classes.adviser_id as adviser_id', 'classes.start_time as start_time', 'classes.end_time as end_time', 'classes.status as status', 'classes.name as name', 'classes.remark as remark', 'classes.topic as topic', 'classes.room_url as room_url', 'classes.exercises as exercises', knex.raw('group_concat(companion_class_schedule.user_id) as companions'), knex.raw('group_concat(student_class_schedule.user_id) as students'));
 }
 
 const list = async ctx => {
@@ -36,7 +39,6 @@ const upsert = async ctx => {
     let trx = await promisify(knex.transaction);
 
     try {
-        console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
         let classIds = [body.class_id];
 
         let data = {
@@ -141,7 +143,7 @@ const upsert = async ctx => {
 
         ctx.status = body.class_id ? 200 : 201;
         ctx.set("Location", `${ctx.request.URL}`);
-        ctx.body = (await selectClasses().where({class_id: classIds[0]}))[0];
+        ctx.body = (await selectClasses().where({'classes.class_id': classIds[0]}))[0];
     } catch (error) {
         console.error(error);
 
