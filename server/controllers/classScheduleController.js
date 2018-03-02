@@ -37,7 +37,7 @@ const upsert = async ctx => {
 
     try {
         let classIds = [body.class_id];
-        
+
         let data = {
             adviser_id: body.adviser_id,
             start_time: body.start_time,
@@ -50,21 +50,10 @@ const upsert = async ctx => {
             exercises: body.exercises,
         };
 
-        if (body.class_id) {
-            await trx('classes')
-                .returning('class_id')
-                .update(data)
-                .where({class_id: body.class_id});
-        } else {
-            classIds = await trx('classes')
-                .returning('class_id')
-                .insert(data);
-        }
-
         let studentSchedules = body.students.map(studentId => {
             return {
                 user_id: studentId,
-                class_id: classIds[0],
+                class_id: body.class_id,
                 start_time: body.start_time,
                 end_time: body.end_time,
                 status: 'confirmed'
@@ -74,20 +63,66 @@ const upsert = async ctx => {
         let companionSchedules = body.companions.map(companionId => {
             return {
                 user_id: companionId,
-                class_id: classIds[0],
+                class_id: body.class_id,
                 start_time: body.start_time,
                 end_time: body.end_time,
                 status: 'confirmed'
             }
         })
 
-        await trx('student_class_schedule')
-            .returning('start_time')
-            .insert(studentSchedules)
+        if (body.class_id) {
+            await trx('classes')
+                .returning('class_id')
+                .update(data)
+                .where({class_id: body.class_id});
 
-        await trx('companion_class_schedule')
-            .returning('start_time')
-            .insert(companionSchedules)
+            let originalCompanions = await trx('companion_class_schedule')
+                .select('user_id')
+                .where({class_id: body.class_id});
+
+            let toBeDeletedCompanionSchedules = originalCompanions.filter(c => companionSchedules.indexOf(c) < 0);
+
+            await trx('companion_class_schedule')
+                .where('user_id', 'in', toBeDeletedCompanionSchedules)
+                .del();
+
+            // New companionSchedules
+            companionSchedules = companionSchedules.filter(s => originalCompanions.indexOf(s.user_id) < 0);
+
+            let originalStudents = await trx('student_class_schedule')
+                .select('user_id')
+                .where({class_id: body.class_id});
+
+            let toBeDeletedStudentSchedules = originalStudents.filter(s => studentSchedules.indexOf(s) < 0);
+            await trx('student_class_schedule')
+                .where('user_id', 'in', toBeDeletedStudentSchedules)
+                .del();
+
+            // New StudentSchedules
+            studentSchedules = studentSchedules.filter(s => originalStudents.indexOf(s.user_id) < 0);
+        } else {
+            classIds = await trx('classes')
+                .returning('class_id')
+                .insert(data);
+        }
+
+        if (studentSchedules.length) {
+            await trx('student_class_schedule')
+                .returning('start_time')
+                .insert(studentSchedules.map(s => {
+                    s.class_id = classIds[0];
+                    return s;
+                }))
+        }
+
+        if (companionSchedules.length) {
+            await trx('companion_class_schedule')
+                .returning('start_time')
+                .insert(companionSchedules.map(s => {
+                    s.class_id = classIds[0];
+                    return s;
+                }))
+        }
 
         await trx.commit();
 
