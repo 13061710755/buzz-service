@@ -4,6 +4,8 @@ const promisify = require('../common/promisify');
 const env = process.env.NODE_ENV || "test";
 const config = require("../../knexfile")[env];
 const knex = require("knex")(config);
+const classSchedules = require('../bll/class-schedules');
+
 const listSuggested = async ctx => {
     try {
         let timeRangeStart = new Date(ctx.query.time_range_start).getTime();
@@ -88,7 +90,6 @@ const upsert = async ctx => {
             console.log('original companions = ', originalCompanions);
 
             let toBeDeletedCompanionSchedules = originalCompanions.filter(c => companionSchedules.map(cs => cs.user_id).indexOf(c) < 0);
-            console.log('tobedeleted companion = ', toBeDeletedCompanionSchedules);
 
             await trx('companion_class_schedule')
                 .where('user_id', 'in', toBeDeletedCompanionSchedules)
@@ -106,13 +107,9 @@ const upsert = async ctx => {
             console.log('original students = ', originalStudents)
 
             let toBeDeletedStudentSchedules = originalStudents.filter(s => studentSchedules.map(ss => ss.user_id).indexOf(s) < 0);
-            console.log('tobedeleted sut = ', toBeDeletedStudentSchedules);
-            let result = await trx('student_class_schedule')
-                .where('user_id', 'in', toBeDeletedStudentSchedules)
-                .andWhere({class_id: body.class_id})
-                .del();
 
-            console.log('delete student schedule result = ', result);
+            await classSchedules.removeStudents(trx, toBeDeletedStudentSchedules, body.class_id)
+
             // New StudentSchedules
             studentSchedules = studentSchedules.filter(s => originalStudents.indexOf(s.user_id) < 0);
         } else {
@@ -122,12 +119,7 @@ const upsert = async ctx => {
         }
 
         if (studentSchedules.length) {
-            await trx('student_class_schedule')
-                .returning('start_time')
-                .insert(studentSchedules.map(s => {
-                    s.class_id = classIds[0];
-                    return s;
-                }))
+            classSchedules.addStudents(trx, studentSchedules, classIds[0])
         }
 
         if (companionSchedules.length) {

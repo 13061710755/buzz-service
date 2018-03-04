@@ -13,8 +13,8 @@ create table classes (
 
     primary key(class_id),
 
-    foreign key fk_user(adviser_id)
-    references users(user_id)
+--    foreign key fk_user(adviser_id)
+--    references users(user_id)
 
     on update cascade
     on delete restrict
