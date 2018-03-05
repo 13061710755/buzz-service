@@ -70,4 +70,19 @@ describe("routes: placement-tests", () => {
     });
     /** every subsequent test must be added here !! **/
 
+    describe(`GET ${PATH}/:user_id`, () => {
+        it("when a user's placement is null, can get a {}", done => {
+            chai
+                .request(server)
+                .get(`${PATH}/51`)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(200);
+                    res.type.should.eql("application/json");
+                    res.body.should.eql({});
+
+                    done();
+                });
+        });
+    });
 });
