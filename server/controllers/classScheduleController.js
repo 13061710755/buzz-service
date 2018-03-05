@@ -31,6 +31,16 @@ function selectClasses() {
         .select('classes.class_id as class_id', 'classes.adviser_id as adviser_id', 'classes.start_time as start_time', 'classes.end_time as end_time', 'classes.status as status', 'classes.name as name', 'classes.remark as remark', 'classes.topic as topic', 'classes.room_url as room_url', 'classes.exercises as exercises', knex.raw('group_concat(companion_class_schedule.user_id) as companions'), knex.raw('group_concat(student_class_schedule.user_id) as students'));
 }
 
+const getClassByClassId = async ctx => {
+    let result = await selectClasses()
+        .where("classes.class_id", ctx.params.class_id);
+
+    ctx.status = 200;
+    ctx.set('Location', `${ctx.request.URL}/${ctx.params.class_id}`);
+    ctx.body = result;
+};
+
+
 const list = async ctx => {
     ctx.body = await selectClasses();
 };
@@ -147,4 +157,4 @@ const upsert = async ctx => {
     }
 }
 
-module.exports = {listSuggested, list, upsert};
+module.exports = {listSuggested, list, upsert, getClassByClassId};
