@@ -24,15 +24,23 @@ const list = async ctx => {
     try {
         let {start_time, end_time} = uniformTime(ctx.query.start_time, ctx.query.end_time);
 
-        ctx.body = await selectSchedules()
-            .where('user_id', ctx.params.user_id)
-            .andWhere('start_time', '>=', start_time)
-            .andWhere('end_time', '<=', end_time);
+        ctx.body = await selectSchedulesadd()
+            .where('student_class_schedule.user_id', ctx.params.user_id)
+            .andWhere('student_class_schedule.start_time', '>=', start_time)
+            .andWhere('student_class_schedule.end_time', '<=', end_time);
     } catch (error) {
         console.error(error);
         ctx.throw(500, error);
     }
 };
+
+let selectSchedulesadd = function () {
+    return knex('student_class_schedule')
+        .leftJoin('classes','student_class_schedule.class_id','classes.class_id')
+        .select('student_class_schedule.user_id as user_id', 'student_class_schedule.class_id as class_id', 'student_class_schedule.status as status',
+            'student_class_schedule.start_time as start_time', 'student_class_schedule.end_time as end_time',
+            'classes.status as cStatus', 'classes.topic as topic');
+}
 
 const listAll = async ctx => {
     ctx.body = await selectSchedules();
