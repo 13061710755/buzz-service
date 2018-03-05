@@ -50,7 +50,7 @@ const upsert = async ctx => {
 };
 
 const query = async ctx => {
-    ctx.body = (await knex('user_placement_tests').select('detail', 'level').where({user_id: ctx.params.user_id}))[0];
+    ctx.body = (await knex('user_placement_tests').select('detail', 'level').where({user_id: ctx.params.user_id}))[0] || {};
 };
 
 module.exports = {upsert: upsert, query: query};
