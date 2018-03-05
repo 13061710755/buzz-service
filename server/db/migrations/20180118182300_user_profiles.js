@@ -12,8 +12,8 @@ exports.up = function (knex, Promise) {
         table.string('avatar');
         table.string('grade');
         table.string('parent_name');
-        table.timestamp('create_at');
-        table.timestamp('update_at');
+        table.timestamp('create_at').defaultTo(new Date());
+        table.timestamp('update_at').defaultTo(new Date());
 
         table.foreign('user_id').references('users.user_id');
     })

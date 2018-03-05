@@ -39,7 +39,7 @@ let selectSchedulesadd = function () {
         .leftJoin('classes','student_class_schedule.class_id','classes.class_id')
         .select('student_class_schedule.user_id as user_id', 'student_class_schedule.class_id as class_id', 'student_class_schedule.status as status',
             'student_class_schedule.start_time as start_time', 'student_class_schedule.end_time as end_time',
-            'classes.status as cStatus', 'classes.topic as topic');
+            'classes.status as classes_status', 'classes.topic as topic');
 }
 
 const listAll = async ctx => {
