@@ -23,7 +23,7 @@ describe("routes: class schedules", () => {
             });
     });
 // Rollback the migration after each test
-    afterEach((done) => {
+    afterEach(() => {
         return knex.migrate.rollback();
     });
 // Here comes the first test
