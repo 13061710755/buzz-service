@@ -28,6 +28,7 @@ const search = async ctx => {
         }
 
         if (ctx.query.display_name) {
+            console.log('searching by name = ', ctx.query.display_name, decodeURIComponent(ctx.query.display_name));
             search = search.whereRaw('(user_profiles.display_name like ? or users.name like ?)', [`%${ctx.query.display_name}%`, `%${ctx.query.display_name}%`]);
         }
 
@@ -282,8 +283,8 @@ const update = async ctx => {
         await trx.commit();
 
         ctx.status = 201;
-        ctx.set("Location", `${ctx.request.URL}/${ctx.params.user_id}`);
-        ctx.body = body;
+        ctx.set("Location", `${ctx.request.URL}`);
+        ctx.body = await selectUsers().where('users.user_id', ctx.params.user_id);
     } catch (error) {
         console.error('updating user error: ', error);
 
