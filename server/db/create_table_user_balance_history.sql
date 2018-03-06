@@ -4,6 +4,7 @@ create table user_balance_history (
     type enum('h'),
     event enum('charge', 'consume'),
     amount decimal,
+    remark text,
 
     primary key (user_id, timestamp),
 
