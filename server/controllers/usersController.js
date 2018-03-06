@@ -230,6 +230,7 @@ let updateUserProfilesTable = async function (body, trx, ctx) {
         location: body.location,
         grade: body.grade,
         parent_name: body.parent_name,
+        update_at: new Date(),
     });
     if (Object.keys(profiles).length > 0) {
         const userProfile = await trx('user_profiles')

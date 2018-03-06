@@ -11,6 +11,9 @@ create table user_profiles (
     avatar text,
     grade varchar(255),
     parent_name varchar(255),
+    create_at timestamp,
+    update_at timestamp
+
 
     foreign key fk_user(user_id)
     references users(user_id)
