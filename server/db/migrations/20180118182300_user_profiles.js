@@ -8,6 +8,9 @@ exports.up = function (knex, Promise) {
         table.string('mobile');
         table.string('email');
         table.string('language').defaultTo('en-US');
+        table.string('country');
+        table.string('state');
+        table.string('city');
         table.string('location');
         table.string('avatar');
         table.string('grade');
