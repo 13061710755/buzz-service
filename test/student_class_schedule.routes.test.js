@@ -36,7 +36,7 @@ describe("routes: student class schedule", () => {
                     res.status.should.eql(200);
                     res.type.should.eql("application/json");
                     res.body.length.should.eql(2);
-                    res.body[0].should.include.keys("user_id", "status" , "classes_status", "topic", "companion_name", "companion_avatar");
+                    res.body[0].should.include.keys("user_id", "status", "classes_status", "topic", "companion_name", "companion_avatar", "title");
                     done();
                 });
         });
