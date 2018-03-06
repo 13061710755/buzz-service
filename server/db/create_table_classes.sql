@@ -2,6 +2,7 @@ create table classes (
 	class_id bigint(11) not null auto_increment,
     adviser_id int not null,
     companion_id int not null,
+    level text,
     start_time datetime,
     end_time datetime,
     status enum('opened', 'cancelled', 'ready', 'started', 'ended'),

@@ -11,8 +11,8 @@ create table user_profiles (
     avatar text,
     grade varchar(255),
     parent_name varchar(255),
-    create_at datetime default current_timestamp,
-    update_at datetime default current_timestamp,
+    create_at timestamp default current_timestamp,
+    update_at timestamp default current_timestamp,
 
 
     foreign key fk_user(user_id)
