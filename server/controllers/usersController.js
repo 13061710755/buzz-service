@@ -28,7 +28,7 @@ const search = async ctx => {
         }
 
         if (ctx.query.display_name) {
-            search = search.andWhere('user_profiles.display_name', 'like', `%${ctx.query.display_name}%`);
+            search = search.whereRaw('(user_profiles.display_name like ? or users.name like ?)', [`%${ctx.query.display_name}%`, `%${ctx.query.display_name}%`]);
         }
 
         let result = await search;
