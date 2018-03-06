@@ -37,7 +37,8 @@ const list = async ctx => {
 let selectSchedulesadd = function () {
     return knex('student_class_schedule')
         .leftJoin('classes','student_class_schedule.class_id','classes.class_id')
-        .leftJoin('user_profiles','student_class_schedule.user_id', 'user_profiles.user_id')
+        .leftJoin('companion_class_schedule', 'classes.class_id', 'companion_class_schedule.class_id')
+        .leftJoin('user_profiles','companion_class_schedule.user_id', 'user_profiles.user_id')
         .select('student_class_schedule.user_id as user_id', 'student_class_schedule.class_id as class_id', 'student_class_schedule.status as status',
             'student_class_schedule.start_time as start_time', 'student_class_schedule.end_time as end_time',
             'classes.status as classes_status', 'classes.topic as topic','user_profiles.display_name as companion_name',
