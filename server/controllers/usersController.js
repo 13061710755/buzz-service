@@ -5,8 +5,6 @@ const knex = require("knex")(config);
 
 function filterByTime(search, start_time = new Date(1900, 1, 1), end_time = new Date(2100, 1, 1)) {
     return search
-        .leftJoin('student_class_schedule', 'users.user_id', 'student_class_schedule.user_id')
-        .leftJoin('companion_class_schedule', 'users.user_id', 'companion_class_schedule.user_id')
         .andWhereRaw('(student_class_schedule.start_time >= ? and student_class_schedule.end_time < ?) or (companion_class_schedule.start_time >= ? and companion_class_schedule.end_time < ?)', [start_time, end_time, start_time, end_time])
         ;
 }
@@ -18,7 +16,15 @@ const search = async ctx => {
             filters['users.role'] = ctx.query.role;
         }
 
-        let search = selectUsers();
+        let search = knex('users')
+            .leftJoin('user_profiles', 'users.user_id', 'user_profiles.user_id')
+            .leftJoin('user_social_accounts', 'users.user_id', 'user_social_accounts.user_id')
+            .leftJoin('user_interests', 'users.user_id', 'user_interests.user_id')
+            .leftJoin('user_balance', 'users.user_id', 'user_balance.user_id')
+            .leftJoin('user_placement_tests', 'users.user_id', 'user_placement_tests.user_id')
+            .leftJoin('student_class_schedule', 'users.user_id', 'student_class_schedule.user_id')
+            .leftJoin('companion_class_schedule', 'users.user_id', 'companion_class_schedule.user_id')
+            .groupByRaw('users.user_id');
 
         if (Object.keys(filters).length) {
             search = search.where(filters);
@@ -45,8 +51,7 @@ const search = async ctx => {
             search = filterByTime(search, ctx.query.start_time, ctx.query.end_time);
         }
 
-        let result = await search;
-        ctx.body = result;
+        ctx.body = await selectFields(search);
         // ctx.body = await search;
     } catch (error) {
         console.error(error);
@@ -73,7 +78,7 @@ const show = async ctx => {
     }
 };
 
-let selectUsers = function () {
+function joinTables() {
     return knex('users')
         .leftJoin('user_profiles', 'users.user_id', 'user_profiles.user_id')
         .leftJoin('user_social_accounts', 'users.user_id', 'user_social_accounts.user_id')
@@ -81,8 +86,17 @@ let selectUsers = function () {
         .leftJoin('user_balance', 'users.user_id', 'user_balance.user_id')
         .leftJoin('user_placement_tests', 'users.user_id', 'user_placement_tests.user_id')
         .groupByRaw('users.user_id')
+}
+
+function selectFields(search) {
+    return search
         .select('users.user_id as user_id', 'users.name as name', 'users.created_at as created_at', 'users.role as role', 'user_profiles.avatar as avatar', 'user_profiles.display_name as display_name', 'user_profiles.gender as gender', 'user_profiles.date_of_birth as date_of_birth', 'user_profiles.mobile as mobile', 'user_profiles.email as email', 'user_profiles.language as language', 'user_profiles.location as location', 'user_profiles.description as description', 'user_profiles.grade as grade', 'user_profiles.parent_name as parent_name', 'user_profiles.country as country', 'user_profiles.city as city', 'user_social_accounts.facebook_id as facebook_id', 'user_social_accounts.wechat_data as wechat_data', 'user_social_accounts.facebook_name as facebook_name', 'user_social_accounts.wechat_name as wechat_name', 'user_balance.class_hours as class_hours', 'user_placement_tests.level as level', knex.raw('group_concat(user_interests.interest) as interests'));
-};
+}
+
+function selectUsers() {
+    return selectFields(joinTables());
+}
+
 const getByFacebookId = async ctx => {
     try {
         const {facebook_id} = ctx.params;
