@@ -280,6 +280,7 @@ describe("routes: users", () => {
                 .put(`${PATH}/2`)
                 .send({
                     name: 'changed',
+                    country: '美国',
                     display_name: 'changed',
                     facebook_name: 'changed',
                     interests: ['business', 'art']
@@ -300,6 +301,7 @@ describe("routes: users", () => {
                             res.body.display_name.should.eql('changed');
                             res.body.facebook_name.should.eql('changed');
                             res.body.interests.should.eql('art,business');
+                            res.body.country.should.eql('美国');
 
                             done();
                         });
