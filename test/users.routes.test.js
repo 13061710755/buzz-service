@@ -52,7 +52,7 @@ describe("routes: users", () => {
                     res.status.should.eql(200);
                     res.type.should.eql('application/json');
                     res.body.length.should.eql(1);
-                    res.body[0].should.include.keys('user_id', 'name', 'created_at', 'role', 'avatar', 'facebook_id', 'wechat_data', 'country');
+                    res.body[0].should.include.keys('user_id', 'name', 'created_at', 'role', 'avatar', 'facebook_id', 'wechat_data', 'country', 'city');
                     done();
                 });
         });
