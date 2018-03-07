@@ -287,7 +287,8 @@ describe("routes: users", () => {
                 })
                 .end((err, res) => {
                     should.not.exist(err);
-                    res.status.should.eql(201);
+                    res.status.should.eql(200);
+                    res.body.country.should.eql('美国');
 
                     chai.request(server)
                         .get(`${PATH}/2`)

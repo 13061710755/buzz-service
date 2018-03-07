@@ -285,9 +285,9 @@ const update = async ctx => {
         await updateUserInterestsTable(body, trx, ctx);
         await trx.commit();
 
-        ctx.status = 201;
+        ctx.status = 200;
         ctx.set("Location", `${ctx.request.URL}`);
-        ctx.body = await selectUsers().where('users.user_id', ctx.params.user_id);
+        ctx.body = (await selectUsers().where('users.user_id', ctx.params.user_id))[0];
     } catch (error) {
         console.error('updating user error: ', error);
 
