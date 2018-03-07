@@ -5,7 +5,7 @@ const knex = require("knex")(config);
 
 function filterByTime(search, start_time = new Date(1900, 1, 1), end_time = new Date(2100, 1, 1)) {
     return search
-        .andWhereRaw('(student_class_schedule.start_time >= ? and student_class_schedule.end_time < ?) or (companion_class_schedule.start_time >= ? and companion_class_schedule.end_time < ?)', [start_time, end_time, start_time, end_time])
+        .andWhereRaw('((student_class_schedule.start_time >= ? and student_class_schedule.end_time < ?) or (companion_class_schedule.start_time >= ? and companion_class_schedule.end_time < ?))', [start_time, end_time, start_time, end_time])
         ;
 }
 
