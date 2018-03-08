@@ -53,7 +53,7 @@ describe("routes: users", () => {
                     res.status.should.eql(200);
                     res.type.should.eql('application/json');
                     res.body.length.should.eql(1);
-                    res.body[0].should.include.keys('user_id', 'name', 'created_at', 'role', 'avatar', 'facebook_id', 'wechat_data');
+                    res.body[0].should.include.keys('user_id', 'name', 'created_at', 'role', 'avatar', 'facebook_id', 'wechat_data', 'country', 'city');
                     done();
                 });
         });
@@ -281,13 +281,15 @@ describe("routes: users", () => {
                 .put(`${PATH}/2`)
                 .send({
                     name: 'changed',
+                    country: '美国',
                     display_name: 'changed',
                     facebook_name: 'changed',
                     interests: ['business', 'art']
                 })
                 .end((err, res) => {
                     should.not.exist(err);
-                    res.status.should.eql(201);
+                    res.status.should.eql(200);
+                    res.body.country.should.eql('美国');
 
                     chai.request(server)
                         .get(`${PATH}/2`)
@@ -301,6 +303,7 @@ describe("routes: users", () => {
                             res.body.display_name.should.eql('changed');
                             res.body.facebook_name.should.eql('changed');
                             res.body.interests.should.eql('art,business');
+                            res.body.country.should.eql('美国');
 
                             done();
                         });
