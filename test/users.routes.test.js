@@ -25,6 +25,7 @@ describe("routes: users", () => {
     afterEach(() => {
         return knex.migrate.rollback();
     });
+
 // Here comes the first test
     describe(`GET ${PATH}`, () => {
         it("should return all the users", done => {
@@ -308,5 +309,17 @@ describe("routes: users", () => {
                         });
                 });
         });
+    });
+
+    describe(`DEL ${PATH}/:user_id`, () => {
+        it('should delete a user', done => {
+            chai.request(server)
+                .del(`${PATH}/251`)
+                .end((err, res) => {
+                    should.not.exist(err);
+                    res.status.should.eql(200);
+                    done();
+                });
+        })
     });
 });

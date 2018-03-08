@@ -11,5 +11,5 @@ create table user_balance_history (
     foreign key fk_user(user_id)
     references users(user_id)
     on update cascade
-    on delete restrict
+    on delete cascade
 ) engine = innodb

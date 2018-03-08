@@ -7,7 +7,7 @@ exports.up = function (knex, Promise) {
         table.timestamp('updated_at').defaultTo(knex.fn.now());
 
         table.primary('user_id');
-        table.foreign('user_id').references('users.user_id');
+        table.foreign('user_id').references('users.user_id').onDelete('CASCADE').onUpdate('CASCADE');
     });
 };
 

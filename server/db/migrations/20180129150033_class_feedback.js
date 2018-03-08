@@ -8,9 +8,9 @@ exports.up = function (knex, Promise) {
         table.string('comment');
         table.text('remark');
 
-        table.foreign('class_id').references('classes.class_id');
-        table.foreign('from_user_id').references('users.user_id');
-        table.foreign('to_user_id').references('users.user_id');
+        table.foreign('class_id').references('classes.class_id').onDelete('CASCADE').onUpdate('CASCADE');
+        table.foreign('from_user_id').references('users.user_id').onDelete('CASCADE').onUpdate('CASCADE');
+        table.foreign('to_user_id').references('users.user_id').onDelete('CASCADE').onUpdate('CASCADE');
 
         table.primary(['class_id', 'from_user_id', 'to_user_id'])
     })
