@@ -119,7 +119,7 @@ const create = async ctx => {
 const cancel = async ctx => {
     try {
         let {body} = ctx.request;
-        let startTime = moment(body.start_time).format('YYYY-MM-DD hh:mm:ss');
+        let startTime = moment(body.start_time).toISOString().replace('T', ' ').substr(0, 19);
 
         if (!process.env.NODE_ENV || process.env.NODE_ENV === 'test') {
             startTime = new Date(body.start_time).getTime();
