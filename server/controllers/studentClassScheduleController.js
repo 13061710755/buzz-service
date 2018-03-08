@@ -133,7 +133,7 @@ const cancel = async ctx => {
             'status': 'cancelled'
         });
 
-        if (res === 1) {
+        if (res > 0) {
             ctx.body = (await knex('student_class_schedule')
                 .where(filter)
                 .select('user_id', 'status'))[0];
