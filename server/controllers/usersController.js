@@ -293,4 +293,40 @@ const update = async ctx => {
         ctx.body = error;
     }
 };
-module.exports = {index: search, show, getByFacebookId, getByWechat, create, signIn, update};
+
+const deleteByUserID = async ctx => {
+    let trx = await promisify(knex.transaction);
+    try {
+        let userID = ctx.params.user_id;
+
+        /*let deleted = await trx('users')
+            .leftJoin('user_social_accounts','users.user_id','user_social_accounts.user_id ')
+            .leftJoin('user_profiles','users.user_id','user_profiles.user_id')
+            .leftJoin('student_class_schedule','users.user_id','student_class_schedule.`user_id`')
+            .leftJoin('companion_class_schedule','users.user_id','companion_class_schedule.`user_id`')
+            .leftJoin('user_placement_tests','users.user_id','user_placement_tests.`user_id`')
+            .leftJoin('user_interests','users.user_id','user_interests.`user_id`')
+            .leftJoin('user_balance_history','users.user_id','user_balance_history.`user_id`')
+            .leftJoin('user_balance','users.user_id','user_balance.`user_id`')
+            .leftJoin('class_feedback','users.user_id','class_feedback.`from_user_id`')
+            .where('user_id',userID)
+            .del();*/
+
+        let deleted = await trx('users')
+            .where('user_id',userID)
+            .del();
+
+            await trx.commit();
+            ctx.status = 200;
+            ctx.body = "delete success";
+
+        console.log("delete success:", deleted);
+    } catch (error){
+        console.error('delete user error: ',error);
+
+        await trx.rollback();
+        ctx.status = 409;
+        ctx.body = error;
+    }
+}
+module.exports = {index: search, show, getByFacebookId, getByWechat, create, signIn, update,delete: deleteByUserID};

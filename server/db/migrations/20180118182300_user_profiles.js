@@ -18,7 +18,7 @@ exports.up = function (knex, Promise) {
         table.timestamp('create_at').defaultTo(knex.fn.now());
         table.timestamp('update_at').defaultTo(knex.fn.now());
 
-        table.foreign('user_id').references('users.user_id');
+        table.foreign('user_id').references('users.user_id').onDelete('CASCADE').onUpdate('CASCADE');
     })
 };
 

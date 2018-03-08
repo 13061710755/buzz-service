@@ -7,6 +7,6 @@ create table user_interests (
     references users(user_id)
 
     on update cascade
-    on delete restrict
+    on delete cascade
 
 ) engine=innodb

@@ -7,7 +7,7 @@ exports.up = function (knex, Promise) {
         table.decimal('amount', 8, 2);
         table.text('remark');
 
-        table.foreign('user_id').references('users.user_id');
+        table.foreign('user_id').references('users.user_id').onDelete('CASCADE').onUpdate('CASCADE');
     });
 };
 
