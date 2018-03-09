@@ -55,22 +55,13 @@ function searchClasses(search) {
             knex.raw('group_concat(student_class_schedule.user_id) as students'));
 }
 
-function selectClassesWithCompanionInfo() {
-    return knex('classes')
-        .leftJoin('companion_class_schedule', 'classes.class_id', 'companion_class_schedule.class_id')
-        .leftJoin('student_class_schedule', 'classes.class_id', 'student_class_schedule.class_id')
-        .leftJoin('user_profiles', 'user_profiles.user_id', 'companion_class_schedule.user_id')
-        .groupByRaw('classes.class_id')
-        .select('classes.class_id as class_id', 'classes.adviser_id as adviser_id', 'classes.start_time as start_time', 'classes.end_time as end_time', 'classes.status as status', 'classes.name as name', 'classes.remark as remark', 'classes.topic as topic', 'classes.room_url as room_url', 'classes.exercises as exercises', 'profiles.display_name as companion_name', 'profiles.avatar as companion_avatar', knex.raw('group_concat(companion_class_schedule.user_id) as companions'), knex.raw('group_concat(student_class_schedule.user_id) as students'));
-}
-
 const getClassByClassId = async ctx => {
-    let result = await selectClassesWithCompanionInfo()
+    let result = await selectClasses()
         .where("classes.class_id", ctx.params.class_id);
 
     ctx.status = 200;
     ctx.set('Location', `${ctx.request.URL}/${ctx.params.class_id}`);
-    ctx.body = result;
+    ctx.body = result || {};
 };
 
 const list = async ctx => {
