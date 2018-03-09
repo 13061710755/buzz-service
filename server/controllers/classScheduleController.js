@@ -46,7 +46,7 @@ const getClassByClassId = async ctx => {
 
     ctx.status = 200;
     ctx.set('Location', `${ctx.request.URL}/${ctx.params.class_id}`);
-    ctx.body = result;
+    ctx.body = result || {};
 };
 
 
