@@ -11,9 +11,9 @@ const listSuggested = async ctx => {
         let timeRangeStart = new Date(ctx.query.time_range_start).getTime();
 
         let res = await knex('student_class_schedule')
-            .where('student_class_schedule.start_time', '>=', timeRangeStart)
-            .andWhere('student_class_schedule.status', 'booking')
-        ;
+                .where('student_class_schedule.start_time', '>=', timeRangeStart)
+                .andWhere('student_class_schedule.status', 'booking')
+            ;
         let suggestions = Scheduling.makeGroups(res);
         console.log('res = ', res);
         ctx.body = res;
@@ -40,10 +40,28 @@ let uniformTime = function (theStartTime, theEndTime) {
     return {start_time, end_time};
 };
 
-function  filterByTime(search, start_time, end_time) {
+function filterByTime(search, start_time, end_time) {
     return search
         .where('classes.start_time', '>=', start_time)
         .andWhere('classes.end_time', '<=', end_time)
+}
+
+
+function selectClasses() {
+    return knex('classes')
+        .leftJoin('companion_class_schedule', 'classes.class_id', 'companion_class_schedule.class_id')
+        .leftJoin('student_class_schedule', 'classes.class_id', 'student_class_schedule.class_id')
+        .groupByRaw('classes.class_id')
+        .select('classes.class_id as class_id', 'classes.adviser_id as adviser_id', 'classes.start_time as start_time', 'classes.end_time as end_time', 'classes.status as status', 'classes.name as name', 'classes.remark as remark', 'classes.topic as topic', 'classes.room_url as room_url', 'classes.exercises as exercises', knex.raw('group_concat(companion_class_schedule.user_id) as companions'), knex.raw('group_concat(student_class_schedule.user_id) as students'));
+}
+
+function selectClassesWithCompanionInfo() {
+    return knex('classes')
+        .leftJoin('companion_class_schedule', 'classes.class_id', 'companion_class_schedule.class_id')
+        .leftJoin('student_class_schedule', 'classes.class_id', 'student_class_schedule.class_id')
+        .leftJoin('user_profiles', 'companion_class_schedule.user_id', 'user_profiles.user_id')
+        .groupByRaw('classes.class_id')
+        .select('classes.class_id as class_id', 'classes.adviser_id as adviser_id', 'classes.start_time as start_time', 'classes.end_time as end_time', 'classes.status as status', 'classes.name as name', 'classes.remark as remark', 'classes.topic as topic', 'classes.room_url as room_url', 'classes.exercises as exercises', 'user_profiles.display_name as companion_name', 'user_profiles.avatar as companion_name', knex.raw('group_concat(companion_class_schedule.user_id) as companions'), knex.raw('group_concat(student_class_schedule.user_id) as students'));
 }
 
 function searchClasses(search) {
@@ -56,7 +74,7 @@ function searchClasses(search) {
 }
 
 const getClassByClassId = async ctx => {
-    let result = await selectClasses()
+    let result = await selectClassesWithCompanionInfo()
         .where("classes.class_id", ctx.params.class_id);
 
     ctx.status = 200;
@@ -79,7 +97,7 @@ const list = async ctx => {
 
         ctx.body = await searchClasses(search);
         console.log(ctx.body);
-    }catch (error){
+    } catch (error) {
         console.error(error);
     }
 };
