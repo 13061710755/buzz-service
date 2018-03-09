@@ -28,10 +28,10 @@ describe("routes:get class feedback", () => {
 
     // Here comes the first test
     describe(`GET ${PATH}/:class_id`, () => {
-        it("should return all the class_feedback :class_id", done => {
+        it("should return a class_feedback", done => {
             chai
                 .request(server)
-                .get(`${PATH}/1`)
+                .get(`${PATH}/1/1/evaluate/2`)
                 .end((err, res) => {
                     should.not.exist(err);
                     res.status.should.eql(201);
@@ -45,7 +45,7 @@ describe("routes:get class feedback", () => {
         it("should return the newly added feed_back alongside a Location header", done => {
             chai
                 .request(server)
-                .post(`${PATH}/2`)
+                .post(`${PATH}/2/1/evaluate/2`)
                 .send([{
                     class_id: 2,
                     from_user_id: 1,
