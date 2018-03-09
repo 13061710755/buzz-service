@@ -23,7 +23,7 @@ const getFeedbackList = async ctx => {
 
         ctx.status = 201;
         ctx.set('Location', `${ctx.request.URL}/${ctx.params.class_id}/${ctx.params.from_user_id}/evaluate/${ctx.params.to_user_id}`);
-        ctx.body = feedback;
+        ctx.body = feedback || {};
     }
     catch (ex) {
         console.error(ex);
