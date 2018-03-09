@@ -22,5 +22,5 @@ create table user_profiles (
     references users(user_id)
 
     on update cascade
-    on delete restrict
+    on delete cascade
 ) engine= innoDB

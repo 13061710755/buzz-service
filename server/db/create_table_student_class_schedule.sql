@@ -10,12 +10,12 @@ create table student_class_schedule (
     references users(user_id)
 
     on update cascade
-    on delete restrict,
+    on delete cascade,
 
     foreign key fk_class(class_id)
     references classes(class_id)
 
     on update cascade
-    on delete restrict
+    on delete cascade
 
 ) engine=innodb

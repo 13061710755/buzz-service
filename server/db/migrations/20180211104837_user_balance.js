@@ -3,7 +3,7 @@ exports.up = function (knex, Promise) {
         table.bigInteger('user_id');
         table.int('class_hours');
 
-        table.foreign('user_id').references('users.user_id');
+        table.foreign('user_id').references('users.user_id').onDelete('CASCADE').onUpdate('CASCADE');
         table.primary(['user_id'])
     })
 };

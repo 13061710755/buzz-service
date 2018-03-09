@@ -16,10 +16,10 @@ create table class_feedback (
     foreign key fk_from_user(from_user_id)
     references users(user_id)
     on update cascade
-    on delete restrict,
+    on delete cascade,
 
     foreign key fk_to_user(to_user_id)
     references users(user_id)
     on update cascade
-    on delete restrict
+    on delete cascade
 ) engine = innodb

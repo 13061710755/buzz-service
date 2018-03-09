@@ -6,4 +6,9 @@ create table user_placement_tests (
     updated_at datetime default current_timestamp,
 
     primary key(user_id)
+    foreign key fk_user(user_id)
+    references users(user_id)
+
+     on update cascade
+     on delete cascade
 ) engine = InnoDB

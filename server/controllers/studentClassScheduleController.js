@@ -119,7 +119,7 @@ const create = async ctx => {
 const cancel = async ctx => {
     try {
         let {body} = ctx.request;
-        let startTime = moment(body.start_time).format('YYYY-MM-DD hh:mm:ss');
+        let startTime = moment(body.start_time).toISOString().replace('T', ' ').substr(0, 19);
 
         if (!process.env.NODE_ENV || process.env.NODE_ENV === 'test') {
             startTime = new Date(body.start_time).getTime();
@@ -133,7 +133,7 @@ const cancel = async ctx => {
             'status': 'cancelled'
         });
 
-        if (res === 1) {
+        if (res > 0) {
             ctx.body = (await knex('student_class_schedule')
                 .where(filter)
                 .select('user_id', 'status'))[0];

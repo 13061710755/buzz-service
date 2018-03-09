@@ -13,5 +13,5 @@ create table user_social_accounts (
     references users(user_id)
 
     on update cascade
-    on delete restrict
+    on delete cascade
 ) engine = innodb
