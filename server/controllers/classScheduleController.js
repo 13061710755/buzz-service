@@ -23,12 +23,36 @@ const listSuggested = async ctx => {
     }
 };
 
-function selectClasses() {
-    return knex('classes')
-        .leftJoin('companion_class_schedule', 'classes.class_id', 'companion_class_schedule.class_id')
-        .leftJoin('student_class_schedule', 'classes.class_id', 'student_class_schedule.class_id')
-        .groupByRaw('classes.class_id')
-        .select('classes.class_id as class_id', 'classes.adviser_id as adviser_id', 'classes.start_time as start_time', 'classes.end_time as end_time', 'classes.status as status', 'classes.name as name', 'classes.remark as remark', 'classes.topic as topic', 'classes.room_url as room_url', 'classes.exercises as exercises', knex.raw('group_concat(companion_class_schedule.user_id) as companions'), knex.raw('group_concat(student_class_schedule.user_id) as students'));
+let uniformTime = function (theStartTime, theEndTime) {
+    let start_time = theStartTime;
+    if (start_time) {
+        start_time = new Date(start_time);
+    } else {
+        start_time = new Date(0, 0, 0);
+    }
+
+    let end_time = theEndTime;
+    if (end_time) {
+        end_time = new Date(end_time);
+    } else {
+        end_time = new Date(9999, 11, 30);
+    }
+    return {start_time, end_time};
+};
+
+function  filterByTime(search, start_time, end_time) {
+    return search
+        .where('classes.start_time', '>=', start_time)
+        .andWhere('classes.end_time', '<=', end_time)
+}
+
+function searchClasses(search) {
+    return search
+        .select('classes.class_id as class_id', 'classes.adviser_id as adviser_id', 'classes.start_time as start_time',
+            'classes.end_time as end_time', 'classes.status as status', 'classes.name as name', 'classes.remark as remark',
+            'classes.topic as topic', 'classes.room_url as room_url', 'classes.exercises as exercises',
+            knex.raw('group_concat(companion_class_schedule.user_id) as companions'),
+            knex.raw('group_concat(student_class_schedule.user_id) as students'));
 }
 
 function selectClassesWithCompanionInfo() {
@@ -49,9 +73,24 @@ const getClassByClassId = async ctx => {
     ctx.body = result;
 };
 
-
 const list = async ctx => {
-    ctx.body = await selectClasses();
+    try {
+        let {start_time, end_time} = uniformTime(ctx.query.start_time, ctx.query.end_time);
+
+        let search = knex('classes')
+            .leftJoin('companion_class_schedule', 'classes.class_id', 'companion_class_schedule.class_id')
+            .leftJoin('student_class_schedule', 'classes.class_id', 'student_class_schedule.class_id')
+            .groupByRaw('classes.class_id')
+
+        if (start_time || end_time) {
+            search = filterByTime(search, start_time, end_time);
+        }
+
+        ctx.body = await searchClasses(search);
+        console.log(ctx.body);
+    }catch (error){
+        console.error(error);
+    }
 };
 
 const upsert = async ctx => {
