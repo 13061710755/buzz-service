@@ -28,7 +28,7 @@ describe("routes:get class feedback", () => {
 
     // Here comes the first test
     describe(`GET ${PATH}/:class_id`, () => {
-        it("should return a class_feedback with class info and companion info", done => {
+        it("should return a class_feedback", done => {
             chai
                 .request(server)
                 .get(`${PATH}/1/1/evaluate/2`)
@@ -37,7 +37,7 @@ describe("routes:get class feedback", () => {
                     res.status.should.eql(201);
                     res.type.should.eql("application/json");
                     res.body.length.should.eql(1);
-                    res.body[0].should.include.keys("class_id", "from_user_id", "to_user_id", "comment", "score", "companion_avatar");
+                    res.body[0].should.include.keys("class_id", "from_user_id", "to_user_id", "comment", "score");
                     done();
                 });
         });
