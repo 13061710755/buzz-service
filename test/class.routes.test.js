@@ -67,6 +67,7 @@ describe("routes: class schedules", () => {
                 .send({
                     adviser_id: 1,
                     companions: [4, 5, 6],
+                    level: 'aa',
                     start_time: '20180302T10:00:00Z',
                     end_time: '20180302T11:00:00Z',
                     status: 'opened',
