@@ -334,14 +334,15 @@ const deleteByUserID = async ctx => {
             .del();
 
         if (deleted == 0){
-            throw new Error('Without this user');
-        }
-        
+            await trx.commit();
+            ctx.status = 200;
+            ctx.body = "Without this user";
+        }else {
             await trx.commit();
             ctx.status = 200;
             ctx.body = "delete success";
+        }
 
-        console.log("delete success:", deleted);
     } catch (error){
         console.error('delete user error: ',error);
 
