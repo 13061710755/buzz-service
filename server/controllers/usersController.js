@@ -1,6 +1,7 @@
 const promisify = require('../common/promisify')
 const env = process.env.NODE_ENV || "test";
 const config = require("../../knexfile")[env];
+console.log('knex config = ', config);
 const knex = require("knex")(config);
 
 function filterByTime(search, start_time = new Date(1900, 1, 1), end_time = new Date(2100, 1, 1)) {
@@ -353,4 +354,4 @@ const deleteByUserID = async ctx => {
         ctx.body = error;
     }
 }
-module.exports = {index: search, show, getByFacebookId, getByWechat, create, signIn, update, delete: deleteByUserID};
+module.exports = {search: search, show, getByFacebookId, getByWechat, create, signIn, update, delete: deleteByUserID};
