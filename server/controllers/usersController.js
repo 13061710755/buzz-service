@@ -55,6 +55,9 @@ const search = async ctx => {
         // ctx.body = await search;
     } catch (error) {
         console.error(error);
+
+        ctx.status = 500;
+        ctx.body = {error: error.message};
     }
 };
 const show = async ctx => {
@@ -330,25 +333,24 @@ const deleteByUserID = async ctx => {
         let userID = ctx.params.user_id;
 
         let deleted = await trx('users')
-            .where('user_id',userID)
+            .where('user_id', userID)
             .del();
 
-        if (deleted == 0){
-            await trx.commit();
-            ctx.status = 200;
-            ctx.body = "Without this user";
-        }else {
-            await trx.commit();
-            ctx.status = 200;
-            ctx.body = "delete success";
+        if (deleted == 0) {
+            throw new Error('The user does not exist!');
         }
 
-    } catch (error){
-        console.error('delete user error: ',error);
+        await trx.commit();
+        ctx.status = 200;
+        ctx.body = "delete success";
+
+        console.log("delete success:", deleted);
+    } catch (error) {
+        console.error('delete user error: ', error);
 
         await trx.rollback();
         ctx.status = 409;
         ctx.body = error;
     }
 }
-module.exports = {index: search, show, getByFacebookId, getByWechat, create, signIn, update,delete: deleteByUserID};
+module.exports = {index: search, show, getByFacebookId, getByWechat, create, signIn, update, delete: deleteByUserID};
