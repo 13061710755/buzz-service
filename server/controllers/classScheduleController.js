@@ -215,4 +215,44 @@ const upsert = async ctx => {
     }
 }
 
-module.exports = {listSuggested, list, upsert, getClassByClassId};
+const change = async ctx => {
+   /* let trx = await promisify(knex.transaction);*/
+    try{
+        let listAll =await knex('classes')
+            .where('status', 'not in', ['ended', 'cancelled'])
+            .select()
+
+        let currentTime = new Date().getTime();
+        let filtrateList = new Set();
+        let arr =[];
+
+        for (let c = 0; c < listAll.length; c++){
+            let searchTime = new Date(listAll[c].end_time).getTime();
+            if(searchTime < currentTime){
+                filtrateList = filtrateList.add(listAll[c]);
+                arr.push(listAll[c].class_id);
+            }
+        }
+
+         await knex('classes')
+            .where('class_id', 'in', arr)
+            .update({
+                status: 'ended'
+            })
+
+        /*await trx.commit();*/
+
+        let listEnd = await knex('classes')
+            .select()
+
+        ctx.body = listEnd;
+        ctx.status = 200;
+        console.log(ctx.body)
+
+    }catch (error){
+        console.log(error);
+        /*await trx.rollback();*/
+    }
+}
+
+module.exports = {listSuggested, list, upsert, change, getClassByClassId};
