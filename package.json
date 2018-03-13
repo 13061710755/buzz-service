@@ -24,5 +24,12 @@
     "mysql2": "^1.5.1",
     "pg": "^7.4.1",
     "sequelize": "^4.32.1"
-  }
+  },
+  "apps": [
+    {
+      "scripts": "server/index.js",
+      "watch": "true",
+      "name": "buzz-corner-service"
+    }
+  ]
 }
