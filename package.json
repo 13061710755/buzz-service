@@ -28,7 +28,7 @@
   },
   "apps": [
     {
-      "scripts": "server/index.js",
+      "script": "server/index.js",
       "watch": "true",
       "name": "buzz-corner-service"
     }
