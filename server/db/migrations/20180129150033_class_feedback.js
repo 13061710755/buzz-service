@@ -1,8 +1,8 @@
 exports.up = function (knex, Promise) {
     return knex.schema.createTable('class_feedback', table => {
-        table.bigInteger('class_id');
-        table.bigInteger('from_user_id');
-        table.bigInteger('to_user_id');
+        table.bigInteger('class_id').unsigned().notNullable();
+        table.bigInteger('from_user_id').unsigned().notNullable();
+        table.bigInteger('to_user_id').unsigned().notNullable();
         table.dateTime('feedback_time');
         table.decimal('score');
         table.string('comment');

@@ -312,12 +312,11 @@ describe("routes: users", () => {
     });
 
     describe(`DEL ${PATH}/:user_id`, () => {
-        it('should delete a user', done => {
+        it('should throw error when trying to delete a non-exist user', done => {
             chai.request(server)
                 .del(`${PATH}/251`)
                 .end((err, res) => {
-                    should.not.exist(err);
-                    res.status.should.eql(200);
+                    should.exist(err);
                     done();
                 });
         })
