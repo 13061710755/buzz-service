@@ -70,19 +70,12 @@ module.exports = {
     },
 
     production: {
-        client: 'postgresql',
-        connection: {
-            database: 'my_db',
-            user: 'username',
-            password: 'password'
-        },
-        pool: {
-            min: 2,
-            max: 10
-        },
+        client: 'mysql',
+        connection: process.env.RDS_MYSQL_URL,
         migrations: {
-            tableName: 'knex_migrations'
-        }
+            directory: path.join(BASE_PATH, 'migrations')
+        },
+        seeds: {}
     }
 
 };
