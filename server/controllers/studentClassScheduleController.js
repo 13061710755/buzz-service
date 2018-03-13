@@ -129,7 +129,7 @@ const cancel = async ctx => {
             'user_id': ctx.params.user_id,
             'start_time': startTime
         };
-        let res = await knex('student_class_schedule').where(filter).update({
+        let res = await knex('student_class_schedule').where(filter).andWhere({status: 'booking'}).update({
             'status': 'cancelled'
         });
 
