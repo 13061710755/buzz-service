@@ -177,12 +177,12 @@ const create = async ctx => {
         if (!users.length) {
             throw new Error("The user already exists");
         }
-        //在用户信息表中插入用户id和用户头像
+
         const userProfile = await trx('user_profiles').insert({
             user_id: users[0],
             avatar: body.avatar || ''
         });
-        //插入facebook wechat 信息
+
         const userSocialAccounts = await trx('user_social_accounts').insert({
             user_id: users[0],
             facebook_id: body.facebook_id || null,
