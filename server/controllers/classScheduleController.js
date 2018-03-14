@@ -90,6 +90,7 @@ const list = async ctx => {
             .leftJoin('companion_class_schedule', 'classes.class_id', 'companion_class_schedule.class_id')
             .leftJoin('student_class_schedule', 'classes.class_id', 'student_class_schedule.class_id')
             .groupByRaw('classes.class_id')
+            .orderBy('classes.start_time', 'DESC')
 
         if (start_time || end_time) {
             search = filterByTime(search, start_time, end_time);

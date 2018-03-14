@@ -25,7 +25,8 @@ const search = async ctx => {
             .leftJoin('user_placement_tests', 'users.user_id', 'user_placement_tests.user_id')
             .leftJoin('student_class_schedule', 'users.user_id', 'student_class_schedule.user_id')
             .leftJoin('companion_class_schedule', 'users.user_id', 'companion_class_schedule.user_id')
-            .groupByRaw('users.user_id');
+            .groupByRaw('users.user_id')
+            .orderBy('users.created_at', 'desc');
 
         if (Object.keys(filters).length) {
             search = search.where(filters);
@@ -34,6 +35,7 @@ const search = async ctx => {
         if (ctx.query.mobile) {
             search = search.andWhere('user_profiles.mobile', 'like', `%${ctx.query.mobile}%`)
         }
+
 
         if (ctx.query.email) {
             search = search.andWhere('user_profiles.email', 'like', `%${ctx.query.email}%`)
@@ -53,6 +55,7 @@ const search = async ctx => {
         }
 
         ctx.body = await selectFields(search);
+        console.log(ctx.body);
         // ctx.body = await search;
     } catch (error) {
         console.error(error);
@@ -174,12 +177,12 @@ const create = async ctx => {
         if (!users.length) {
             throw new Error("The user already exists");
         }
-
+        //在用户信息表中插入用户id和用户头像
         const userProfile = await trx('user_profiles').insert({
             user_id: users[0],
             avatar: body.avatar || ''
         });
-
+        //插入facebook wechat 信息
         const userSocialAccounts = await trx('user_social_accounts').insert({
             user_id: users[0],
             facebook_id: body.facebook_id || null,

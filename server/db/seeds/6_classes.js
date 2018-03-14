@@ -35,7 +35,7 @@ exports.seed = function (knex, Promise) {
                     class_id: 4,
                     name: 'class 4',
                     level: 'ccc',
-                    start_time: new Date(2018, 1, 25, 8, 0),
+                    start_time: new Date(2018, 1, 26, 8, 0),
                     end_time: new Date(2018, 1, 25, 9, 0),
                     room_url: 'https://zoom.us/j/9746042933',
                     status: 'ready'
