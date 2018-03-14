@@ -6,5 +6,5 @@ router.get(`${BASE_URL}/suggested-classes`, classScheduleController.listSuggeste
 router.get(`${BASE_URL}`, classScheduleController.list);
 router.get(`${BASE_URL}/:class_id`, classScheduleController.getClassByClassId);
 router.post(`${BASE_URL}`, classScheduleController.upsert);
-
+router.put(`${BASE_URL}`, classScheduleController.change);
 module.exports = router;

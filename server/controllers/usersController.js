@@ -25,7 +25,8 @@ const search = async ctx => {
             .leftJoin('user_placement_tests', 'users.user_id', 'user_placement_tests.user_id')
             .leftJoin('student_class_schedule', 'users.user_id', 'student_class_schedule.user_id')
             .leftJoin('companion_class_schedule', 'users.user_id', 'companion_class_schedule.user_id')
-            .groupByRaw('users.user_id');
+            .groupByRaw('users.user_id')
+            .orderBy('users.created_at', 'desc');
 
         if (Object.keys(filters).length) {
             search = search.where(filters);
@@ -34,6 +35,7 @@ const search = async ctx => {
         if (ctx.query.mobile) {
             search = search.andWhere('user_profiles.mobile', 'like', `%${ctx.query.mobile}%`)
         }
+
 
         if (ctx.query.email) {
             search = search.andWhere('user_profiles.email', 'like', `%${ctx.query.email}%`)
@@ -53,6 +55,7 @@ const search = async ctx => {
         }
 
         ctx.body = await selectFields(search);
+        console.log(ctx.body);
         // ctx.body = await search;
     } catch (error) {
         console.error(error);
@@ -338,7 +341,7 @@ const deleteByUserID = async ctx => {
             .del();
 
         if (deleted == 0) {
-            throw new Error('Without this user');
+            throw new Error('The user does not exist!');
         }
 
         await trx.commit();
