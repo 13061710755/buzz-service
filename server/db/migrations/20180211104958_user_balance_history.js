@@ -1,6 +1,6 @@
 exports.up = function (knex, Promise) {
     return knex.schema.createTable('user_balance_history', table => {
-        table.bigInteger('user_id');
+        table.bigInteger('user_id').unsigned().notNullable();
         table.timestamp('timestamp').defaultTo(knex.fn.now());
         table.enum('type', ['h']);
         table.enum('event', ['charge', 'consume']);
