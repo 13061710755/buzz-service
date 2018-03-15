@@ -22,7 +22,9 @@ async function consumeClassHours(trx, userId, classHours, remark = '') {
     };
 
     if (currentClassHours.length > 0) {
-        await trx('user_balance').update(newClassHours);
+        await trx('user_balance')
+            .where('user_id', userId)
+            .update(newClassHours);
     } else {
         await trx('user_balance').insert(newClassHours);
     }
@@ -47,7 +49,9 @@ async function chargeClassHours(trx, userId, classHours, remark = '') {
     };
 
     if (currentClassHours.length > 0) {
-        await trx('user_balance').update(newClassHours);
+        await trx('user_balance')
+            .where('user_id', userId)
+            .update(newClassHours);
     } else {
         await trx('user_balance').insert(newClassHours);
     }
