@@ -284,12 +284,14 @@ describe("routes: users", () => {
                     country: '美国',
                     display_name: 'changed',
                     facebook_name: 'changed',
-                    interests: ['business', 'art']
+                    interests: ['business', 'art'],
+                    remark: 'test'
                 })
                 .end((err, res) => {
                     should.not.exist(err);
                     res.status.should.eql(200);
                     res.body.country.should.eql('美国');
+                    res.body.remark.should.eql('test');
 
                     chai.request(server)
                         .get(`${PATH}/2`)
@@ -304,6 +306,7 @@ describe("routes: users", () => {
                             res.body.facebook_name.should.eql('changed');
                             res.body.interests.should.eql('art,business');
                             res.body.country.should.eql('美国');
+                            res.body.remark.should.eql('test');
 
                             chai.request(server)
                                 .put(`${PATH}/2`)

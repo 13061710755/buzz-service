@@ -4,6 +4,7 @@ exports.up = function (knex, Promise) {
         table.string('name');
         table.enum('role', ['s', 'c', 'a']);
         table.timestamp('created_at').defaultTo(knex.fn.now());
+        table.text('remark');
 
         // table.primary('user_id');
     })
