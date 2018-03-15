@@ -50,17 +50,33 @@ describe("routes: student class schedule", () => {
                 .post(`${PATH}/2`)
                 .send([{
                     start_time: new Date(2018, 1, 1, 1, 0),
-                    end_time: new Date(2018, 1, 1, 2, 0)
+                    end_time: new Date(2018, 1, 1, 2, 0),
+                    status: 'booking'
                 }, {
                     start_time: new Date(2018, 1, 2, 1, 0),
-                    end_time: new Date(2018, 1, 2, 2, 0)
+                    end_time: new Date(2018, 1, 2, 2, 0),
+                    status: 'booking'
+                }, {
+                    start_time: new Date(2018, 1, 3, 1, 0),
+                    end_time: new Date(2018, 1, 3, 2, 0),
+                    status: 'booking'
                 }])
                 .end((err, res) => {
                     should.not.exist(err);
                     res.status.should.eql(201);
                     res.should.have.header("Location");
                     res.type.should.eql("application/json");
-                    done();
+
+                    // Should not make interests duplicate:
+                    chai.request(server)
+                        .get(`/api/v1/users?role=s`)
+                        .end((err, res) => {
+                            should.not.exist(err);
+                            res.status.should.eql(200);
+                            res.body[0].interests.should.eql('business');
+
+                            done();
+                        })
                 });
         });
         it("should return an error when the schedule conflicts", done => {

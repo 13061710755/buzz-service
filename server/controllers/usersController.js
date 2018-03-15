@@ -6,7 +6,7 @@ const knex = require("knex")(config);
 
 function filterByTime(search, start_time = new Date(1900, 1, 1), end_time = new Date(2100, 1, 1)) {
     return search
-        .andWhereRaw('((student_class_schedule.start_time >= ? and student_class_schedule.end_time < ?) or (companion_class_schedule.start_time >= ? and companion_class_schedule.end_time < ?))', [start_time, end_time, start_time, end_time])
+        .andWhereRaw('(exists (select * from student_class_schedule where student_class_schedule.start_time >= ? and student_class_schedule.end_time < ?) or exists (select * from companion_class_schedule where companion_class_schedule.start_time >= ? and companion_class_schedule.end_time < ?))', [start_time, end_time, start_time, end_time])
         ;
 }
 
@@ -17,17 +17,10 @@ const search = async ctx => {
             filters['users.role'] = ctx.query.role;
         }
 
-        let search = knex('users')
-            .leftJoin('user_profiles', 'users.user_id', 'user_profiles.user_id')
-            .leftJoin('user_social_accounts', 'users.user_id', 'user_social_accounts.user_id')
-            .leftJoin('user_interests', 'users.user_id', 'user_interests.user_id')
-            .leftJoin('user_balance', 'users.user_id', 'user_balance.user_id')
-            .leftJoin('user_placement_tests', 'users.user_id', 'user_placement_tests.user_id')
-            .leftJoin('student_class_schedule', 'users.user_id', 'student_class_schedule.user_id')
-            .leftJoin('companion_class_schedule', 'users.user_id', 'companion_class_schedule.user_id')
-            .groupByRaw('users.user_id')
-            .orderBy('users.created_at', 'desc');
-
+        let search = joinTables()
+            .orderBy('users.created_at', 'desc')
+        ;
+        
         if (Object.keys(filters).length) {
             search = search.where(filters);
         }
@@ -357,4 +350,4 @@ const deleteByUserID = async ctx => {
         ctx.body = error;
     }
 }
-module.exports = {search: search, show, getByFacebookId, getByWechat, create, signIn, update, delete: deleteByUserID};
+module.exports = {search, show, getByFacebookId, getByWechat, create, signIn, update, delete: deleteByUserID};

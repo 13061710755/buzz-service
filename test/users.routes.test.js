@@ -305,7 +305,15 @@ describe("routes: users", () => {
                             res.body.interests.should.eql('art,business');
                             res.body.country.should.eql('美国');
 
-                            done();
+                            chai.request(server)
+                                .put(`${PATH}/2`)
+                                .send({interests: ['business', 'art']})
+                                .end((err, res) => {
+                                    should.not.exist(err);
+                                    res.body.interests.should.eql('art,business');
+
+                                    done();
+                                })
                         });
                 });
         });
