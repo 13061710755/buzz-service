@@ -11,9 +11,9 @@ const listSuggested = async ctx => {
         let timeRangeStart = new Date(ctx.query.time_range_start).getTime();
 
         let res = await knex('student_class_schedule')
-                .where('student_class_schedule.start_time', '>=', timeRangeStart)
-                .andWhere('student_class_schedule.status', 'booking')
-            ;
+            .where('student_class_schedule.start_time', '>=', timeRangeStart)
+            .andWhere('student_class_schedule.status', 'booking')
+        ;
         let suggestions = Scheduling.makeGroups(res);
         console.log('res = ', res);
         ctx.body = res;
@@ -68,7 +68,7 @@ function searchClasses(search) {
     return search
         .select('classes.class_id as class_id', 'classes.adviser_id as adviser_id', 'classes.start_time as start_time',
             'classes.end_time as end_time', 'classes.status as status', 'classes.name as name', 'classes.remark as remark',
-            'classes.topic as topic', 'classes.room_url as room_url', 'classes.exercises as exercises','classes.level as level',
+            'classes.topic as topic', 'classes.room_url as room_url', 'classes.exercises as exercises', 'classes.level as level',
             knex.raw('group_concat(companion_class_schedule.user_id) as companions'),
             knex.raw('group_concat(student_class_schedule.user_id) as students'));
 }
@@ -86,10 +86,7 @@ const list = async ctx => {
     try {
         let {start_time, end_time} = uniformTime(ctx.query.start_time, ctx.query.end_time);
 
-        let search = knex('classes')
-            .leftJoin('companion_class_schedule', 'classes.class_id', 'companion_class_schedule.class_id')
-            .leftJoin('student_class_schedule', 'classes.class_id', 'student_class_schedule.class_id')
-            .groupByRaw('classes.class_id')
+        let search = selectClassesWithCompanionInfo()
             .orderBy('classes.start_time', 'DESC')
 
         if (start_time || end_time) {
@@ -217,25 +214,25 @@ const upsert = async ctx => {
 }
 
 const change = async ctx => {
-   /* let trx = await promisify(knex.transaction);*/
-    try{
-        let listAll =await knex('classes')
+    /* let trx = await promisify(knex.transaction);*/
+    try {
+        let listAll = await knex('classes')
             .where('status', 'not in', ['ended', 'cancelled'])
             .select()
 
         let currentTime = new Date().getTime();
         let filtrateList = new Set();
-        let arr =[];
+        let arr = [];
 
-        for (let c = 0; c < listAll.length; c++){
+        for (let c = 0; c < listAll.length; c++) {
             let searchTime = new Date(listAll[c].end_time).getTime();
-            if(searchTime < currentTime){
+            if (searchTime < currentTime) {
                 filtrateList = filtrateList.add(listAll[c]);
                 arr.push(listAll[c].class_id);
             }
         }
 
-         await knex('classes')
+        await knex('classes')
             .where('class_id', 'in', arr)
             .update({
                 status: 'ended'
@@ -250,7 +247,7 @@ const change = async ctx => {
         ctx.status = 200;
         console.log(ctx.body)
 
-    }catch (error){
+    } catch (error) {
         console.log(error);
         /*await trx.rollback();*/
     }
