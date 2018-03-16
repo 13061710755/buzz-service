@@ -42,7 +42,7 @@ let selectSchedulesWithMoreInfo = function () {
         .leftJoin('class_feedback', 'class_feedback.from_user_id', 'student_class_schedule.user_id')
         .select('student_class_schedule.user_id as user_id', 'student_class_schedule.class_id as class_id', 'student_class_schedule.status as status',
             'classes.start_time as start_time', 'classes.end_time as end_time',
-            'classes.status as classes_status', 'classes.topic as topic', 'user_profiles.display_name as companion_name', 'classes.name as title',
+            'classes.status as classes_status', 'classes.topic as topic', 'user_profiles.display_name as companion_name', 'user_profiles.user_id as companion_id', 'classes.name as title',
             'user_profiles.avatar as companion_avatar', 'class_feedback.from_user_id as from_user_id', 'class_feedback.to_user_id as to_user_id',  'class_feedback.score as score', 'class_feedback.comment as comment');
 }
 
