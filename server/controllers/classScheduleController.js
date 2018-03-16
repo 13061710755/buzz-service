@@ -28,14 +28,14 @@ let uniformTime = function (theStartTime, theEndTime) {
     if (start_time) {
         start_time = new Date(start_time);
     } else {
-        start_time = new Date(0, 0, 0);
+        start_time = undefined;
     }
 
     let end_time = theEndTime;
     if (end_time) {
         end_time = new Date(end_time);
     } else {
-        end_time = new Date(9999, 11, 30);
+        end_time = undefined;
     }
     return {start_time, end_time};
 };
