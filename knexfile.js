@@ -11,6 +11,7 @@ module.exports = {
             database: 'buzz3',
             user: 'root',
             password: '1050709',
+            "timezone": "UTC"
         },
         pool: {
             min: 2,
@@ -36,6 +37,7 @@ module.exports = {
             directory: path.join(BASE_PATH, 'seeds')
         },
         useNullAsDefault: true,
+        "timezone": "UTC"
     },
 
     staging: {
@@ -46,7 +48,8 @@ module.exports = {
         },
         seeds: {
             directory: path.join(BASE_PATH, 'seeds')
-        }
+        },
+        "timezone": "UTC"
     },
 
     staging_postgresql: {
@@ -76,7 +79,8 @@ module.exports = {
         migrations: {
             directory: path.join(BASE_PATH, 'migrations')
         },
-        seeds: {}
+        seeds: {},
+        "timezone": "UTC"
     }
 
 };
