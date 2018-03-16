@@ -28,7 +28,8 @@ module.exports = {
     test: {
         client: 'sqlite3',
         connection: {
-            filename: './test.sqlite3'
+            filename: './test.sqlite3',
+            "timezone": "UTC"
         },
         migrations: {
             directory: path.join(BASE_PATH, 'migrations')
@@ -37,7 +38,6 @@ module.exports = {
             directory: path.join(BASE_PATH, 'seeds')
         },
         useNullAsDefault: true,
-        "timezone": "UTC"
     },
 
     staging: {
@@ -49,7 +49,6 @@ module.exports = {
         seeds: {
             directory: path.join(BASE_PATH, 'seeds')
         },
-        "timezone": "UTC"
     },
 
     staging_postgresql: {
@@ -59,7 +58,8 @@ module.exports = {
             database: process.env.PG_DB,
             user: process.env.PG_USER,
             password: process.env.PG_PASSWORD,
-            charset: 'utf-8'
+            charset: 'utf-8',
+            "timezone": "UTC"
         },
         pool: {
             min: 2,
@@ -75,12 +75,17 @@ module.exports = {
 
     production: {
         client: 'mysql',
-        connection: process.env.RDS_MYSQL_URL,
+        connection: {
+            host: process.env.RDS_BUZZ_HOST,
+            user: process.env.RDS_BUZZ_USER,
+            password: process.env.RDS_BUZZ_PASSWORD,
+            database: process.env.RDS_BUZZ_DB,
+            "timezone": "UTC"
+        },
         migrations: {
             directory: path.join(BASE_PATH, 'migrations')
         },
         seeds: {},
-        "timezone": "UTC"
     }
 
 };
