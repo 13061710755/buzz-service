@@ -33,7 +33,7 @@ const getFeedbackList = async ctx => {
 
 const setFeedbackInfo = async ctx => {
     let {body} = ctx.request;
-    let data = body.map(b => Object.assign({class_id: ctx.params.class_id, from_user_id: ctx.params.form_user_id, to_user_id: ctx.params.to_user_id}, b));
+    let data = body.map(b => Object.assign({class_id: ctx.params.class_id, from_user_id: ctx.params.from_user_id, to_user_id: ctx.params.to_user_id}, b));
 
     try {
         let inserted = await knex('class_feedback')
@@ -42,7 +42,7 @@ const setFeedbackInfo = async ctx => {
         ;
 
         ctx.status = 201;
-        ctx.set('Location', `${ctx.request.URL}/${ctx.params.user_id}/${ctx.params.form_user_id}/evaluate/${ctx.params.to_user_id}`);
+        ctx.set('Location', `${ctx.request.URL}/${ctx.params.user_id}/${ctx.params.from_user_id}/evaluate/${ctx.params.to_user_id}`);
         ctx.body = inserted;
     } catch (ex) {
         console.error(ex);
