@@ -150,7 +150,7 @@ describe("routes: users", () => {
                 .request(server)
                 .post(`${PATH}`)
                 .send({
-                    facebook_id: "12345",
+                    facebook_id: "12345678",
                     facebook_name: "John Doe",
                     role: 's',
                     name: 'John Doe',
@@ -173,7 +173,20 @@ describe("routes: users", () => {
                             res.type.should.eql("application/json");
                             res.body.should.include.keys("user_id", "name", "created_at", "role", "avatar", "facebook_id", "wechat_data");
                             res.body.wechat_name.should.eql('xxx yyy');
-                            done();
+
+                            chai.request(server)
+                                .post(`${PATH}/`)
+                                .send({
+                                    facebook_id: "12345678",
+                                    facebook_name: "Trying to add a user with the same facebook_id",
+                                    role: 's',
+                                    name: 'John Doe',
+                                    user_id: 20
+                                })
+                                .end((err, res) => {
+                                    should.exist(err);
+                                    done();
+                                })
                         });
                 });
         });
