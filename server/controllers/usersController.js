@@ -361,7 +361,11 @@ const getWechatJsConfig = async ctx => {
 }
 const wechatMedia = async ctx => {
   try {
-    console.log(await wechat.getMedia(ctx.request.body))
+    const buffer = await wechat.getMedia(ctx.request.body)
+    const Stream = require('stream')
+    const stream = new Stream.PassThrough()
+    stream.end(buffer)
+    console.log(await qiniu.uploadStream(stream))
     ctx.status = 200
     ctx.body = {}
   } catch (error) {
