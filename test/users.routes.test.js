@@ -351,4 +351,18 @@ describe('routes: users', () => {
         })
     })
   })
+  describe(`GET ${PATH}/qiniu/token`, () => {
+    it('should return the correct qiniu uptoken and config', done => {
+      chai
+        .request(server)
+        .get(`${PATH}/qiniu/token`)
+        .end((err, res) => {
+          should.not.exist(err)
+          res.status.should.eql(200)
+          res.type.should.eql('application/json')
+          res.body.should.include.keys(['resources_url', 'upload_url', 'uptoken'])
+          done()
+        })
+    })
+  })
 })

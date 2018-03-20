@@ -4,6 +4,7 @@ const config = require('../../knexfile')[env]
 console.log('knex config = ', config)
 const knex = require('knex')(config)
 const wechat = require('../common/wechat')
+const qiniu = require('../common/qiniu')
 
 function filterByTime(search, start_time = new Date(1900, 1, 1), end_time = new Date(2100, 1, 1)) {
   return search
@@ -369,4 +370,14 @@ const wechatMedia = async ctx => {
     ctx.body = error
   }
 }
-module.exports = { search, show, getByFacebookId, getByWechat, create, signIn, update, delete: deleteByUserID, getWechatJsConfig, wechatMedia }
+const qiniuToken = async ctx => {
+  try {
+    ctx.status = 200
+    ctx.body = qiniu.getUptoken()
+  } catch (error) {
+    console.error('getQiniuUptoken error: ', error)
+    ctx.status = 500
+    ctx.body = error
+  }
+}
+module.exports = { search, show, getByFacebookId, getByWechat, create, signIn, update, delete: deleteByUserID, getWechatJsConfig, wechatMedia, qiniuToken }
