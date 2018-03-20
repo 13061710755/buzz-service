@@ -8,6 +8,9 @@ const config_qiniu = {
     upload_url: 'http://upload.qiniu.com/',
     resources_url: 'http://p57969ygc.bkt.clouddn.com/',
   },
+  suffix: {
+    avvod: 'avvod/m3u8',
+  },
 }
 const mac = new qiniu.auth.digest.Mac(config_qiniu.ACCESS_KEY, config_qiniu.SECRET_KEY)
 const putPolicy = new qiniu.rs.PutPolicy({
@@ -42,7 +45,10 @@ module.exports = {
         if (respErr) {
           reject(respErr)
         } else if (respInfo.statusCode === 200) {
-          resolve(respBody)
+          resolve({
+            ...respBody,
+            ...config_qiniu,
+          })
         } else {
           reject(new Error({ status: respInfo.statusCode, body: respBody }))
         }

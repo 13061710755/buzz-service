@@ -5,6 +5,7 @@ console.log('knex config = ', config)
 const knex = require('knex')(config)
 const wechat = require('../common/wechat')
 const qiniu = require('../common/qiniu')
+const Stream = require('stream')
 
 function filterByTime(search, start_time = new Date(1900, 1, 1), end_time = new Date(2100, 1, 1)) {
   return search
@@ -362,12 +363,12 @@ const getWechatJsConfig = async ctx => {
 const wechatMedia = async ctx => {
   try {
     const buffer = await wechat.getMedia(ctx.request.body)
-    const Stream = require('stream')
     const stream = new Stream.PassThrough()
     stream.end(buffer)
-    console.log(await qiniu.uploadStream(stream))
+    const { key, url: { resources_url }, suffix: { avvod } } = await qiniu.uploadStream(stream)
+    const url = `${resources_url}${key}?${avvod}`
     ctx.status = 200
-    ctx.body = {}
+    ctx.body = { url }
   } catch (error) {
     console.error('getWechatJsConfig error: ', error)
     ctx.status = 500
