@@ -11,4 +11,5 @@ router.put(`${BASE_URL}/sign-in`, usersController.signIn)
 router.put(`${BASE_URL}/:user_id`, usersController.update)
 router.del(`${BASE_URL}/:user_id`, usersController.delete)
 router.post(`${BASE_URL}/getWechatJsConfig`, usersController.getWechatJsConfig)
+router.post(`${BASE_URL}/wechatMedia`, usersController.wechatMedia)
 module.exports = router

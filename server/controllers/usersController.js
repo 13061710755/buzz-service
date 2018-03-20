@@ -349,8 +349,8 @@ const deleteByUserID = async ctx => {
 }
 const getWechatJsConfig = async ctx => {
   try {
-    ctx.status = 200
     const jsConfig = await wechat.getJsConfig(ctx.request.body)
+    ctx.status = 200
     ctx.body = { jsConfig }
   } catch (error) {
     console.error('getWechatJsConfig error: ', error)
@@ -358,4 +358,15 @@ const getWechatJsConfig = async ctx => {
     ctx.body = error
   }
 }
-module.exports = { search, show, getByFacebookId, getByWechat, create, signIn, update, delete: deleteByUserID, getWechatJsConfig }
+const wechatMedia = async ctx => {
+  try {
+    console.log(await wechat.getMedia(ctx.request.body))
+    ctx.status = 200
+    ctx.body = {}
+  } catch (error) {
+    console.error('getWechatJsConfig error: ', error)
+    ctx.status = 500
+    ctx.body = error
+  }
+}
+module.exports = { search, show, getByFacebookId, getByWechat, create, signIn, update, delete: deleteByUserID, getWechatJsConfig, wechatMedia }
