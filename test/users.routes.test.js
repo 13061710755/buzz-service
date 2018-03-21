@@ -334,35 +334,4 @@ describe('routes: users', () => {
         })
     })
   })
-
-  describe(`POST ${PATH}/getWechatJsConfig`, () => {
-    it('should return the correct wechat js config', done => {
-      chai
-        .request(server)
-        .post(`${PATH}/getWechatJsConfig`)
-        .send({ debug: true, jsApiList: ['startRecord', 'stopRecord', 'onVoiceRecordEnd', 'playVoice', 'pauseVoice', 'stopVoice', 'onVoicePlayEnd', 'uploadVoice', 'downloadVoice'], url: 'https://corner-test.buzzbuzzenglish.com/1' })
-        .end((err, res) => {
-          should.not.exist(err)
-          res.status.should.eql(200)
-          res.type.should.eql('application/json')
-          res.body.should.include.keys(['jsConfig'])
-          res.body.jsConfig.should.include.keys(['debug', 'appId', 'timestamp', 'nonceStr', 'signature'])
-          done()
-        })
-    })
-  })
-  describe(`GET ${PATH}/qiniu/token`, () => {
-    it('should return the correct qiniu uptoken and config', done => {
-      chai
-        .request(server)
-        .get(`${PATH}/qiniu/token`)
-        .end((err, res) => {
-          should.not.exist(err)
-          res.status.should.eql(200)
-          res.type.should.eql('application/json')
-          res.body.should.include.keys(['resources_url', 'upload_url', 'uptoken'])
-          done()
-        })
-    })
-  })
 })

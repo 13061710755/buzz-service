@@ -14,7 +14,8 @@ const api = new API(
   async () => {
     try {
       JSON.parse(fs.readFileSync(apiFile, 'utf8'))
-    } catch (e) {}
+    } catch (e) {
+    }
   },
   async token => fs.writeFileSync(apiFile, JSON.stringify(token))
 )
