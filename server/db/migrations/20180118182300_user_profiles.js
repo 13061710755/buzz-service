@@ -7,6 +7,7 @@ exports.up = function (knex, Promise) {
         table.text('description');
         table.string('mobile');
         table.string('email');
+        table.string('password');
         table.string('language').defaultTo('en-US');
         table.string('country');
         table.string('state');

@@ -19,7 +19,7 @@ describe('routes: users', () => {
   afterEach(() => knex.migrate.rollback())
 
   // Here comes the first test
-  describe(`GET ${PATH}`, () => {
+  /*describe(`GET ${PATH}`, () => {
     it('should return all the users', done => {
       chai
         .request(server)
@@ -234,9 +234,8 @@ describe('routes: users', () => {
           done()
         })
     })
-  })
-
-  describe(`PUT ${PATH}/sign-in`, () => {
+  })*/
+  /*describe(`PUT ${PATH}/sign-in`, () => {
     it('should not allow empty info log in', done => {
       chai.request(server)
         .put(`${PATH}/sign-in`)
@@ -275,9 +274,100 @@ describe('routes: users', () => {
           done()
         })
     })
+  })*/
+  describe(`PUT ${PATH}/sign-in-byMobile`, () => {
+      it('should hint mobile or email is empty', done => {
+          chai.request(server)
+              .put(`${PATH}/sign-in-byMobile`)
+              .send()
+              .end((err, res) => {
+                  should.exist(err)
+                  res.status.should.eql(403)
+                  done()
+              })
+      })
+      it('should hint the requested user does not exists', done => {
+          chai.request(server)
+              .put(`${PATH}/sign-in-byMobile`)
+              .send({
+                  mobile: '1771737336',
+                  password: '123'
+              })
+              .end((err, res) => {
+                  should.exist(err)
+                  res.status.should.eql(404)
+                  done()
+              })
+      });
+
+      it('should hint the requested user does not exists', done => {
+          chai.request(server)
+              .put(`${PATH}/sign-in-byMobile`)
+              .send({
+                  email: 'jie.tian@hotmail',
+                  password: '123'
+              })
+              .end((err, res) => {
+                  should.exist(err)
+                  res.status.should.eql(404)
+                  done()
+              })
+      });
+
+      it('should hint Account or password error', done => {
+          chai.request(server)
+              .put(`${PATH}/sign-in-byMobile`)
+              .send({
+                  mobile: '17717373367',
+                  password: '1'
+              })
+              .end((err, res) => {
+                  should.exist(err)
+                  res.status.should.eql(403)
+                  done()
+              })
+      });
+      it('should hint Account or password error', done => {
+          chai.request(server)
+              .put(`${PATH}/sign-in-byMobile`)
+              .send({
+                  email: 'jie.tian@hotmail.com',
+                  password: '1'
+              })
+              .end((err, res) => {
+                  should.exist(err)
+                  res.status.should.eql(403)
+                  done()
+              })
+      });
+
+      it('should hint login successful', done =>{
+          chai.request(server)
+              .put(`${PATH}/sign-in-byMobile`)
+              .send({
+                  mobile: '17717373367',
+                  password: '123'
+              })
+              .end((err, res) => {
+                  res.status.should.eql(200)
+                  done()
+              })
+      });
+      it('should hint login successful', done =>{
+          chai.request(server)
+              .put(`${PATH}/sign-in-byMobile`)
+              .send({
+                  email: 'jie.tian@hotmail.com',
+                  password: '123'
+              })
+              .end((err, res) => {
+                  res.status.should.eql(200)
+                  done()
+              })
+      });
   })
 
-  describe(`PUT ${PATH}/:user_id`, () => {
+/*  describe(`PUT ${PATH}/:user_id`, () => {
     it('should update a user', done => {
       chai.request(server)
         .put(`${PATH}/2`)
@@ -364,5 +454,5 @@ describe('routes: users', () => {
           done()
         })
     })
-  })
+  })*/
 })
