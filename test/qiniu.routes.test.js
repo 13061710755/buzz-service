@@ -11,18 +11,18 @@ const chaiHttp = require('chai-http')
 chai.use(chaiHttp)
 // Rollback, commit and populate the test database before each test
 describe('routes: qiniu', () => {
-  describe(`GET ${PATH}/token`, () => {
-    it('should return the correct qiniu uptoken and config', done => {
-      chai
-        .request(server)
-        .get(`${PATH}/token`)
-        .end((err, res) => {
-          should.not.exist(err)
-          res.status.should.eql(200)
-          res.type.should.eql('application/json')
-          res.body.should.include.keys(['resources_url', 'upload_url', 'uptoken'])
-          done()
+    describe(`GET ${PATH}/token`, () => {
+        it('should return the correct qiniu uptoken and config', done => {
+            chai
+                .request(server)
+                .get(`${PATH}/token`)
+                .end((err, res) => {
+                    should.not.exist(err)
+                    res.status.should.eql(200)
+                    res.type.should.eql('application/json')
+                    res.body.should.include.keys(['resources_url', 'upload_url', 'uptoken'])
+                    done()
+                })
         })
     })
-  })
 })

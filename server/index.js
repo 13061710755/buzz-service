@@ -25,6 +25,6 @@ app.use(userPlacementTestsRoutes.routes())
 app.use(wechatRoutes.routes())
 app.use(qiniuRoutes.routes())
 const server = app.listen(PORT).on('error', err => {
-  console.error(err)
+    console.error(err)
 })
 module.exports = server

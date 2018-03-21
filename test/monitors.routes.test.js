@@ -11,26 +11,26 @@ const chaiHttp = require('chai-http')
 chai.use(chaiHttp)
 // Rollback, commit and populate the test database before each test
 describe('routes: monitors', () => {
-  beforeEach(() => {
-  })
-  // Rollback the migration after each test
-  afterEach(() => {
-  })
-  // Here comes the first test
-  describe(`GET ${PATH}/health-check`, () => {
-    it('should be healthy', done => {
-      chai
-        .request(server)
-        .get(`${PATH}/health-check`)
-        .end((err, res) => {
-          should.not.exist(err)
-          res.status.should.eql(200)
-          res.type.should.eql('application/json')
-          res.body.should.include.keys('everything')
-          res.body.everything.should.eql('is ok')
-          done()
+    beforeEach(() => {
+    })
+    // Rollback the migration after each test
+    afterEach(() => {
+    })
+    // Here comes the first test
+    describe(`GET ${PATH}/health-check`, () => {
+        it('should be healthy', done => {
+            chai
+                .request(server)
+                .get(`${PATH}/health-check`)
+                .end((err, res) => {
+                    should.not.exist(err)
+                    res.status.should.eql(200)
+                    res.type.should.eql('application/json')
+                    res.body.should.include.keys('everything')
+                    res.body.everything.should.eql('is ok')
+                    done()
+                })
         })
     })
-  })
-  /** every subsequent test must be added here !! * */
+    /** every subsequent test must be added here !! * */
 })

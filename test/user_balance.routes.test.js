@@ -11,47 +11,47 @@ const chaiHttp = require('chai-http')
 chai.use(chaiHttp)
 // Rollback, commit and populate the test database before each test
 describe('routes: user balance', () => {
-  beforeEach(() => knex.migrate
-    .rollback()
-    .then(() => knex.migrate.latest())
-    .then(() => knex.seed.run()))
-  // Rollback the migration after each test
-  afterEach(() => knex.migrate.rollback())
-  // Here comes the first test
-  describe(`PUT ${PATH}/:user_id`, () => {
-    it('can charge class hours for a user', done => {
-      chai
-        .request(server)
-        .put(`${PATH}/1`)
-        .send({
-          class_hours: 10,
-        })
-        .end((err, res) => {
-          should.not.exist(err)
-          res.status.should.eql(201)
-          res.type.should.eql('application/json')
-          res.body.should.eql({ class_hours: 10 })
-          done()
+    beforeEach(() => knex.migrate
+        .rollback()
+        .then(() => knex.migrate.latest())
+        .then(() => knex.seed.run()))
+    // Rollback the migration after each test
+    afterEach(() => knex.migrate.rollback())
+    // Here comes the first test
+    describe(`PUT ${PATH}/:user_id`, () => {
+        it('can charge class hours for a user', done => {
+            chai
+                .request(server)
+                .put(`${PATH}/1`)
+                .send({
+                    class_hours: 10,
+                })
+                .end((err, res) => {
+                    should.not.exist(err)
+                    res.status.should.eql(201)
+                    res.type.should.eql('application/json')
+                    res.body.should.eql({ class_hours: 10 })
+                    done()
+                })
         })
     })
-  })
-  /** every subsequent test must be added here !! * */
+    /** every subsequent test must be added here !! * */
 
-  describe(`DELETE ${PATH}/:user_id`, () => {
-    it('can consume class hours of a user', done => {
-      chai
-        .request(server)
-        .del(`${PATH}/1`)
-        .send({
-          class_hours: 3,
-        })
-        .end((err, res) => {
-          should.not.exist(err)
-          res.status.should.eql(201)
-          res.type.should.eql('application/json')
-          res.body.should.eql({ class_hours: -3 })
-          done()
+    describe(`DELETE ${PATH}/:user_id`, () => {
+        it('can consume class hours of a user', done => {
+            chai
+                .request(server)
+                .del(`${PATH}/1`)
+                .send({
+                    class_hours: 3,
+                })
+                .end((err, res) => {
+                    should.not.exist(err)
+                    res.status.should.eql(201)
+                    res.type.should.eql('application/json')
+                    res.body.should.eql({ class_hours: -3 })
+                    done()
+                })
         })
     })
-  })
 })
