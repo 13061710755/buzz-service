@@ -276,10 +276,10 @@ describe('routes: users', () => {
                 })
         })
     })
-  describe(`PUT ${PATH}/sign-in-byMobile`, () => {
+  describe(`PUT ${PATH}/sign-in-byMobileOrEmail`, () => {
       it('should hint mobile or email is empty', done => {
           chai.request(server)
-              .put(`${PATH}/sign-in-byMobile`)
+              .put(`${PATH}/sign-in-byMobileOrEmail`)
               .send()
               .end((err, res) => {
                   should.exist(err)
@@ -289,7 +289,7 @@ describe('routes: users', () => {
       })
       it('should hint the requested user does not exists', done => {
           chai.request(server)
-              .put(`${PATH}/sign-in-byMobile`)
+              .put(`${PATH}/sign-in-byMobileOrEmail`)
               .send({
                   mobile: '1771737336',
                   password: '123'
@@ -303,7 +303,7 @@ describe('routes: users', () => {
 
       it('should hint the requested user does not exists', done => {
           chai.request(server)
-              .put(`${PATH}/sign-in-byMobile`)
+              .put(`${PATH}/sign-in-byMobileOrEmail`)
               .send({
                   email: 'jie.tian@hotmail',
                   password: '123'
@@ -317,7 +317,7 @@ describe('routes: users', () => {
 
       it('should hint Account or password error', done => {
           chai.request(server)
-              .put(`${PATH}/sign-in-byMobile`)
+              .put(`${PATH}/sign-in-byMobileOrEmail`)
               .send({
                   mobile: '17717373367',
                   password: '1'
@@ -330,7 +330,7 @@ describe('routes: users', () => {
       });
       it('should hint Account or password error', done => {
           chai.request(server)
-              .put(`${PATH}/sign-in-byMobile`)
+              .put(`${PATH}/sign-in-byMobileOrEmail`)
               .send({
                   email: 'jie.tian@hotmail.com',
                   password: '1'
@@ -344,7 +344,7 @@ describe('routes: users', () => {
 
       it('should hint login successful', done =>{
           chai.request(server)
-              .put(`${PATH}/sign-in-byMobile`)
+              .put(`${PATH}/sign-in-byMobileOrEmail`)
               .send({
                   mobile: '17717373367',
                   password: '123'
@@ -356,7 +356,7 @@ describe('routes: users', () => {
       });
       it('should hint login successful', done =>{
           chai.request(server)
-              .put(`${PATH}/sign-in-byMobile`)
+              .put(`${PATH}/sign-in-byMobileOrEmail`)
               .send({
                   email: 'jie.tian@hotmail.com',
                   password: '123'

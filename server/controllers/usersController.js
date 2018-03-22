@@ -83,14 +83,14 @@ const search = async ctx => {
         console.error(error)
 
         ctx.status =
-        ctx.body = { error: error.message }
+            ctx.body = {error: error.message}
     }
 }
 const show = async ctx => {
     try {
-        const { user_id } = ctx.params
+        const {user_id} = ctx.params
         const users = await selectUsers()
-            .where({ 'users.user_id': user_id })
+            .where({'users.user_id': user_id})
 
         if (!users.length) {
             throw new Error('The requested user does not exists')
@@ -109,9 +109,9 @@ const show = async ctx => {
 
 const getByFacebookId = async ctx => {
     try {
-        const { facebook_id } = ctx.params
+        const {facebook_id} = ctx.params
         const users = await selectUsers()
-            .where({ 'user_social_accounts.facebook_id': facebook_id })
+            .where({'user_social_accounts.facebook_id': facebook_id})
 
         if (!users.length) {
             throw new Error('The requested user does not exists')
@@ -130,7 +130,7 @@ const getByFacebookId = async ctx => {
 
 const getByWechat = async ctx => {
     try {
-        const { openid, unionid } = ctx.query
+        const {openid, unionid} = ctx.query
         if (!openid && !unionid) {
             throw new Error('Please specifiy a openid or unionid')
         }
@@ -166,7 +166,7 @@ const create = async ctx => {
     const trx = await promisify(knex.transaction)
 
     try {
-        const { body } = ctx.request
+        const {body} = ctx.request
 
         const users = await trx('users')
             .returning('user_id')
@@ -231,8 +231,8 @@ const signInByMobileOrEmail = async ctx => {
     const filterMobile = {'user_profiles.mobile': mobile}
     const filterEmail = {'user_profiles.email': email}
 
-    if (mobile){
-       var users = await selectUsers().where(filterMobile)
+    if (mobile) {
+        var users = await selectUsers().where(filterMobile)
     }
     if (email) {
         var users = await selectUsers().where(filterEmail)
@@ -240,7 +240,7 @@ const signInByMobileOrEmail = async ctx => {
 
     if (!users.length) {
         return ctx.throw(404, 'The requested user does not exists')
-    }else {
+    } else {
         //用户输入的密码和查询返回的users信息中的密码进行比较
         //使用md5加密
         const md5 = crypto.createHash('md5')
@@ -253,7 +253,7 @@ const signInByMobileOrEmail = async ctx => {
 
             ctx.cookies.set('user_id', users[0].user_id, {httpOnly: true, expires: 0})
             ctx.body = users[0]
-        }else {
+        } else {
             /*throw new Error('Account or password error')*/
             return ctx.throw(403, 'Account or password error')
         }
@@ -261,13 +261,13 @@ const signInByMobileOrEmail = async ctx => {
 }
 
 const signIn = async ctx => {
-    const { user_id, facebook_id, wechat_openid, wechat_unionid } = ctx.request.body
+    const {user_id, facebook_id, wechat_openid, wechat_unionid} = ctx.request.body
 
     if (!user_id) {
         return ctx.throw(403, 'sign in not allowed')
     }
 
-    const filter = { 'users.user_id': user_id }
+    const filter = {'users.user_id': user_id}
 
     const users = await selectUsers().where(filter)
 
@@ -275,7 +275,7 @@ const signIn = async ctx => {
         return ctx.throw(404, 'The requested user does not exists')
     }
 
-    ctx.cookies.set('user_id', user_id, { httpOnly: true, expires: 0 })
+    ctx.cookies.set('user_id', user_id, {httpOnly: true, expires: 0})
     ctx.body = users[0]
 }
 
@@ -352,7 +352,7 @@ const updateUserInterestsTable = async function (body, trx, ctx) {
 
         console.log('deleted = ', deleted)
 
-        const values = body.interests.map(i => ({ user_id: ctx.params.user_id, interest: i }))
+        const values = body.interests.map(i => ({user_id: ctx.params.user_id, interest: i}))
 
         console.log('inserting ...', values)
         const inserted = await trx('user_interests')
@@ -365,7 +365,7 @@ const update = async ctx => {
     const trx = await promisify(knex.transaction)
 
     try {
-        const { body } = ctx.request
+        const {body} = ctx.request
         await updateUsersTable(body, trx, ctx)
         await updateUserProfilesTable(body, trx, ctx)
         await updateUserAccountsTable(body, trx, ctx)
@@ -408,6 +408,9 @@ const deleteByUserID = async ctx => {
         await trx.rollback()
         ctx.status = 409
         ctx.body = error
+    }
+}
+
 module.exports = {
     search,
     show,
