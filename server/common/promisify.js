@@ -1,1 +1,1 @@
-module.exports = (fn) => new Promise((resolve, reject) => fn(resolve, reject));
+module.exports = fn => new Promise((resolve, reject) => fn(resolve, reject))

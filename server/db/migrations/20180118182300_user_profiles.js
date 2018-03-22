@@ -19,10 +19,10 @@ exports.up = function (knex, Promise) {
         table.timestamp('create_at').defaultTo(knex.fn.now());
         table.timestamp('update_at').defaultTo(knex.fn.now());
 
-        table.foreign('user_id').references('users.user_id').onDelete('CASCADE').onUpdate('CASCADE');
+        table.foreign('user_id').references('users.user_id').onDelete('CASCADE').onUpdate('CASCADE')
     })
-};
+}
 
 exports.down = function (knex, Promise) {
-    return knex.schema.dropTable('user_profiles');
-};
+    return knex.schema.dropTable('user_profiles')
+}

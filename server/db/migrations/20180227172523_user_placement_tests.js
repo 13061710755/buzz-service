@@ -1,16 +1,16 @@
 exports.up = function (knex, Promise) {
     return knex.schema.createTable('user_placement_tests', table => {
-        table.bigInteger('user_id').unsigned().notNullable();
-        table.json('detail');
-        table.string('level');
-        table.timestamp('created_at').defaultTo(knex.fn.now());
-        table.timestamp('updated_at').defaultTo(knex.fn.now());
+        table.bigInteger('user_id').unsigned().notNullable()
+        table.json('detail')
+        table.string('level')
+        table.timestamp('created_at').defaultTo(knex.fn.now())
+        table.timestamp('updated_at').defaultTo(knex.fn.now())
 
-        table.primary('user_id');
-        table.foreign('user_id').references('users.user_id').onDelete('CASCADE').onUpdate('CASCADE');
-    });
-};
+        table.primary('user_id')
+        table.foreign('user_id').references('users.user_id').onDelete('CASCADE').onUpdate('CASCADE')
+    })
+}
 
 exports.down = function (knex, Promise) {
-    return knex.schema.dropTable('user_placement_tests');
-};
+    return knex.schema.dropTable('user_placement_tests')
+}

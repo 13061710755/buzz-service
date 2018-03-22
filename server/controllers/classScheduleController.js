@@ -264,7 +264,7 @@ const change = async ctx => {
         console.log(ctx.body)
     } catch (error) {
         console.log(error)
-        /* await trx.rollback(); */
+    /* await trx.rollback(); */
     }
 }
 
