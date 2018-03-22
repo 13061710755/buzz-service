@@ -52,7 +52,8 @@ const setFeedbackInfo = async ctx => {
 
 const getAdminFeedbackList = async ctx => {
     try {
-        let feedback = await selectFeedbackList();
+        let feedback = await selectFeedbackList()
+            .where('classes.class_id', ctx.param.class_id);
 
         ctx.status = 201;
         ctx.set('Location', `${ctx.request.URL}/admin-list`);
