@@ -276,97 +276,97 @@ describe('routes: users', () => {
                 })
         })
     })
-  describe(`PUT ${PATH}/sign-in-byMobileOrEmail`, () => {
-      it('should hint mobile or email is empty', done => {
-          chai.request(server)
-              .put(`${PATH}/sign-in-byMobileOrEmail`)
-              .send()
-              .end((err, res) => {
-                  should.exist(err)
-                  res.status.should.eql(403)
-                  done()
-              })
-      })
-      it('should hint the requested user does not exists', done => {
-          chai.request(server)
-              .put(`${PATH}/sign-in-byMobileOrEmail`)
-              .send({
-                  mobile: '1771737336',
-                  password: '123'
-              })
-              .end((err, res) => {
-                  should.exist(err)
-                  res.status.should.eql(404)
-                  done()
-              })
-      });
+    describe(`PUT ${PATH}/sign-in-byMobileOrEmail`, () => {
+        it('should hint mobile or email is empty', done => {
+            chai.request(server)
+                .put(`${PATH}/sign-in-byMobileOrEmail`)
+                .send()
+                .end((err, res) => {
+                    should.exist(err)
+                    res.status.should.eql(403)
+                    done()
+                })
+        })
+        it('should hint the requested user does not exists', done => {
+            chai.request(server)
+                .put(`${PATH}/sign-in-byMobileOrEmail`)
+                .send({
+                    mobile: '1771737336',
+                    password: '123',
+                })
+                .end((err, res) => {
+                    should.exist(err)
+                    res.status.should.eql(404)
+                    done()
+                })
+        })
 
-      it('should hint the requested user does not exists', done => {
-          chai.request(server)
-              .put(`${PATH}/sign-in-byMobileOrEmail`)
-              .send({
-                  email: 'jie.tian@hotmail',
-                  password: '123'
-              })
-              .end((err, res) => {
-                  should.exist(err)
-                  res.status.should.eql(404)
-                  done()
-              })
-      });
+        it('should hint the requested user does not exists', done => {
+            chai.request(server)
+                .put(`${PATH}/sign-in-byMobileOrEmail`)
+                .send({
+                    email: 'jie.tian@hotmail',
+                    password: '123',
+                })
+                .end((err, res) => {
+                    should.exist(err)
+                    res.status.should.eql(404)
+                    done()
+                })
+        })
 
-      it('should hint Account or password error', done => {
-          chai.request(server)
-              .put(`${PATH}/sign-in-byMobileOrEmail`)
-              .send({
-                  mobile: '17717373367',
-                  password: '1'
-              })
-              .end((err, res) => {
-                  should.exist(err)
-                  res.status.should.eql(403)
-                  done()
-              })
-      });
-      it('should hint Account or password error', done => {
-          chai.request(server)
-              .put(`${PATH}/sign-in-byMobileOrEmail`)
-              .send({
-                  email: 'jie.tian@hotmail.com',
-                  password: '1'
-              })
-              .end((err, res) => {
-                  should.exist(err)
-                  res.status.should.eql(403)
-                  done()
-              })
-      });
+        it('should hint Account or password error', done => {
+            chai.request(server)
+                .put(`${PATH}/sign-in-byMobileOrEmail`)
+                .send({
+                    mobile: '17717373367',
+                    password: '1',
+                })
+                .end((err, res) => {
+                    should.exist(err)
+                    res.status.should.eql(403)
+                    done()
+                })
+        })
+        it('should hint Account or password error', done => {
+            chai.request(server)
+                .put(`${PATH}/sign-in-byMobileOrEmail`)
+                .send({
+                    email: 'jie.tian@hotmail.com',
+                    password: '1',
+                })
+                .end((err, res) => {
+                    should.exist(err)
+                    res.status.should.eql(403)
+                    done()
+                })
+        })
 
-      it('should hint login successful', done =>{
-          chai.request(server)
-              .put(`${PATH}/sign-in-byMobileOrEmail`)
-              .send({
-                  mobile: '17717373367',
-                  password: '123'
-              })
-              .end((err, res) => {
-                  res.status.should.eql(200)
-                  done()
-              })
-      });
-      it('should hint login successful', done =>{
-          chai.request(server)
-              .put(`${PATH}/sign-in-byMobileOrEmail`)
-              .send({
-                  email: 'jie.tian@hotmail.com',
-                  password: '123'
-              })
-              .end((err, res) => {
-                  res.status.should.eql(200)
-                  done()
-              })
-      });
-  })
+        it('should hint login successful', done => {
+            chai.request(server)
+                .put(`${PATH}/sign-in-byMobileOrEmail`)
+                .send({
+                    mobile: '17717373367',
+                    password: '123',
+                })
+                .end((err, res) => {
+                    res.status.should.eql(200)
+                    done()
+                })
+        })
+        it('should hint login successful', done => {
+            chai.request(server)
+                .put(`${PATH}/sign-in-byMobileOrEmail`)
+                .send({
+                    email: 'jie.tian@hotmail.com',
+                    password: '123',
+                })
+                .end((err, res) => {
+                    res.status.should.eql(200)
+                    done()
+                })
+        })
+    })
 
     describe(`PUT ${PATH}/:user_id`, () => {
         it('should update a user', done => {
