@@ -8,6 +8,7 @@ router.get(`${BASE_URL}/by-wechat`, usersController.getByWechat)
 router.get(`${BASE_URL}/:user_id`, usersController.show)
 router.post(`${BASE_URL}`, usersController.create)
 router.put(`${BASE_URL}/sign-in`, usersController.signIn)
+router.put(`${BASE_URL}/sign-in-byMobileOrEmail`,usersController.signInByMobileOrEmail)
 router.put(`${BASE_URL}/:user_id`, usersController.update)
 router.del(`${BASE_URL}/:user_id`, usersController.delete)
 module.exports = router

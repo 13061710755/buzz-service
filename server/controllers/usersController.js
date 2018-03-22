@@ -2,6 +2,10 @@ const promisify = require('../common/promisify')
 const env = process.env.NODE_ENV || 'test'
 const config = require('../../knexfile')[env]
 const knex = require('knex')(config)
+const wechat = require('../common/wechat')
+const qiniu = require('../common/qiniu')
+const Stream = require('stream')
+const crypto = require('crypto')
 
 function joinTables() {
     return knex('users')
@@ -15,7 +19,18 @@ function joinTables() {
 
 function selectFields(search) {
     return search
-        .select('users.user_id as user_id', 'users.name as name', 'users.created_at as created_at', 'users.role as role', 'users.remark as remark', 'user_profiles.avatar as avatar', 'user_profiles.display_name as display_name', 'user_profiles.gender as gender', 'user_profiles.date_of_birth as date_of_birth', 'user_profiles.mobile as mobile', 'user_profiles.email as email', 'user_profiles.language as language', 'user_profiles.location as location', 'user_profiles.description as description', 'user_profiles.grade as grade', 'user_profiles.parent_name as parent_name', 'user_profiles.country as country', 'user_profiles.city as city', 'user_social_accounts.facebook_id as facebook_id', 'user_social_accounts.wechat_data as wechat_data', 'user_social_accounts.facebook_name as facebook_name', 'user_social_accounts.wechat_name as wechat_name', 'user_balance.class_hours as class_hours', 'user_placement_tests.level as level', knex.raw('group_concat(user_interests.interest) as interests'))
+        .select('users.user_id as user_id', 'users.name as name', 'users.created_at as created_at',
+            'users.role as role', 'users.remark as remark', 'user_profiles.avatar as avatar',
+            'user_profiles.display_name as display_name', 'user_profiles.gender as gender',
+            'user_profiles.date_of_birth as date_of_birth', 'user_profiles.mobile as mobile',
+            'user_profiles.email as email', 'user_profiles.language as language', 'user_profiles.location as location',
+            'user_profiles.description as description', 'user_profiles.grade as grade',
+            'user_profiles.parent_name as parent_name', 'user_profiles.country as country',
+            'user_profiles.city as city', 'user_social_accounts.facebook_id as facebook_id',
+            'user_social_accounts.wechat_data as wechat_data', 'user_social_accounts.facebook_name as facebook_name',
+            'user_social_accounts.wechat_name as wechat_name', 'user_balance.class_hours as class_hours',
+            'user_placement_tests.level as level', 'user_profiles.password as password',
+            knex.raw('group_concat(user_interests.interest) as interests'))
 }
 
 function selectUsers() {
@@ -64,19 +79,18 @@ const search = async ctx => {
 
         ctx.body = await selectFields(search)
         console.log(ctx.body)
-    // ctx.body = await search;
     } catch (error) {
         console.error(error)
 
-        ctx.status = 500
-        ctx.body = { error: error.message }
+        ctx.status =
+            ctx.body = {error: error.message}
     }
 }
 const show = async ctx => {
     try {
-        const { user_id } = ctx.params
+        const {user_id} = ctx.params
         const users = await selectUsers()
-            .where({ 'users.user_id': user_id })
+            .where({'users.user_id': user_id})
 
         if (!users.length) {
             throw new Error('The requested user does not exists')
@@ -95,9 +109,9 @@ const show = async ctx => {
 
 const getByFacebookId = async ctx => {
     try {
-        const { facebook_id } = ctx.params
+        const {facebook_id} = ctx.params
         const users = await selectUsers()
-            .where({ 'user_social_accounts.facebook_id': facebook_id })
+            .where({'user_social_accounts.facebook_id': facebook_id})
 
         if (!users.length) {
             throw new Error('The requested user does not exists')
@@ -116,7 +130,7 @@ const getByFacebookId = async ctx => {
 
 const getByWechat = async ctx => {
     try {
-        const { openid, unionid } = ctx.query
+        const {openid, unionid} = ctx.query
         if (!openid && !unionid) {
             throw new Error('Please specifiy a openid or unionid')
         }
@@ -152,7 +166,7 @@ const create = async ctx => {
     const trx = await promisify(knex.transaction)
 
     try {
-        const { body } = ctx.request
+        const {body} = ctx.request
 
         const users = await trx('users')
             .returning('user_id')
@@ -197,14 +211,63 @@ const create = async ctx => {
     }
 }
 
+
+const signInByMobileOrEmail = async ctx => {
+    const {mobile, email, password} = ctx.request.body;
+
+    //判断用户输入的手机号、邮箱、密码是否为空
+    if (!mobile) {
+        if (!email) {
+            /*throw new Error('please enter your phone number or email address')*/
+            return ctx.throw(403, 'Please enter your phone number or email address')
+        }
+    }
+    if (!password) {
+        /*throw new Error('please enter your password')*/
+        return ctx.throw(403, 'Please enter your password')
+    }
+
+    //通过用户的手机号或邮箱查询用户信息
+    const filterMobile = {'user_profiles.mobile': mobile}
+    const filterEmail = {'user_profiles.email': email}
+
+    if (mobile) {
+        var users = await selectUsers().where(filterMobile)
+    }
+    if (email) {
+        var users = await selectUsers().where(filterEmail)
+    }
+
+    if (!users.length) {
+        return ctx.throw(404, 'The requested user does not exists')
+    } else {
+        //用户输入的密码和查询返回的users信息中的密码进行比较
+        //使用md5加密
+        const md5 = crypto.createHash('md5')
+        md5.update(password)
+        const md5digest = md5.digest('hex')
+
+        if (users[0].password === md5digest) {
+            //把将要返回的用户信息中的密码置为空
+            users[0].password = ''
+
+            ctx.cookies.set('user_id', users[0].user_id, {httpOnly: true, expires: 0})
+            ctx.body = users[0]
+        } else {
+            /*throw new Error('Account or password error')*/
+            return ctx.throw(403, 'Account or password error')
+        }
+    }
+}
+
 const signIn = async ctx => {
-    const { user_id, facebook_id, wechat_openid, wechat_unionid } = ctx.request.body
+    const {user_id, facebook_id, wechat_openid, wechat_unionid} = ctx.request.body
 
     if (!user_id) {
         return ctx.throw(403, 'sign in not allowed')
     }
 
-    const filter = { 'users.user_id': user_id }
+    const filter = {'users.user_id': user_id}
 
     const users = await selectUsers().where(filter)
 
@@ -212,7 +275,7 @@ const signIn = async ctx => {
         return ctx.throw(404, 'The requested user does not exists')
     }
 
-    ctx.cookies.set('user_id', user_id, { httpOnly: true, expires: 0 })
+    ctx.cookies.set('user_id', user_id, {httpOnly: true, expires: 0})
     ctx.body = users[0]
 }
 
@@ -289,7 +352,7 @@ const updateUserInterestsTable = async function (body, trx, ctx) {
 
         console.log('deleted = ', deleted)
 
-        const values = body.interests.map(i => ({ user_id: ctx.params.user_id, interest: i }))
+        const values = body.interests.map(i => ({user_id: ctx.params.user_id, interest: i}))
 
         console.log('inserting ...', values)
         const inserted = await trx('user_interests')
@@ -302,7 +365,7 @@ const update = async ctx => {
     const trx = await promisify(knex.transaction)
 
     try {
-        const { body } = ctx.request
+        const {body} = ctx.request
         await updateUsersTable(body, trx, ctx)
         await updateUserProfilesTable(body, trx, ctx)
         await updateUserAccountsTable(body, trx, ctx)
@@ -347,6 +410,7 @@ const deleteByUserID = async ctx => {
         ctx.body = error
     }
 }
+
 module.exports = {
     search,
     show,
@@ -354,6 +418,7 @@ module.exports = {
     getByWechat,
     create,
     signIn,
+    signInByMobileOrEmail,
     update,
-    delete: deleteByUserID,
+    delete: deleteByUserID
 }
