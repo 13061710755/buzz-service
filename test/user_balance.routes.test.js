@@ -54,4 +54,39 @@ describe('routes: user balance', () => {
                 })
         })
     })
+
+    describe(`PUT ${PATH}/integral/:user_id`, () => {
+        it('can change integral of a user', done => {
+            chai
+                .request(server)
+                .put(`${PATH}/integral/1`)
+                .send({
+                    integral: 10
+                })
+                .end((err, res) => {
+                    should.not.exist(err)
+                    res.status.should.eql(201)
+                    res.type.should.eql('application/json')
+                    res.body.should.eql({ integral: 10 })
+                    done()
+                })
+        });
+    })
+    describe(`DELETE ${PATH}/integral/:user_id`, () => {
+        it('can consume integral of a user', done => {
+            chai
+                .request(server)
+                .del(`${PATH}/integral/1`)
+                .send({
+                    integral: 3
+                })
+                .end((err, res) => {
+                    should.not.exist(err)
+                    res.status.should.eql(201)
+                    res.type.should.eql('application/json')
+                    res.body.should.eql({ integral: -3 })
+                    done()
+                })
+        });
+    })
 })

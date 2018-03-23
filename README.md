@@ -18,9 +18,9 @@ npm test
 
 Commands to create seeds data
 ```
-node node_modules/knex/bin/cli.js migrate:make users --env test
+knex migrate:make users --env test
 
-node node_modules/knex/bin/cli.js seed:make user_social_accounts --env test
+knex seed:make user_social_accounts --env test
 ```
 
 

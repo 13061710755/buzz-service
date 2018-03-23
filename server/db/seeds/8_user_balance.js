@@ -4,7 +4,6 @@ exports.seed = function (knex, Promise) {
         .then(() =>
         // Inserts seed entries
             knex('user_balance').insert([
-                { user_id: 51, class_hours: 10 },
-                { user_id: 41, class_hours: 10 },
+                { user_id: 1, class_hours: null , integral: null}
             ]))
 }
