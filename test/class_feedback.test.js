@@ -28,6 +28,14 @@ describe('routes:get class feedback', () => {
                     done()
                 })
         })
+        it('should return []', done => {
+            chai
+                .request(server)
+                .get(`${PATH}/admin-list/2`)
+                .end((err, res) => {
+                    done()
+                })
+        })
 
         it('should return a class_feedback', done => {
             chai

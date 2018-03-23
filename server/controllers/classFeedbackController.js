@@ -10,8 +10,8 @@ const selectFeedback = function () {
 
 const selectFeedbackList = function () {
     return knex('classes')
-        .leftJoin('class_feedback', 'classes.class_id', 'class_feedback.class_id')
-        .select('class_feedback.class_id as class_id', 'class_feedback.from_user_id as from_user_id', 'class_feedback.to_user_id as to_user_id', 'class_feedback.score as score', 'class_feedback.comment as comment', 'classes.topic as topic', 'classes.start_time as start_time', 'classes.end_time as end_time')
+        .innerJoin('class_feedback', 'classes.class_id', 'class_feedback.class_id')
+        .select('class_feedback.class_id as class_id', 'class_feedback.from_user_id as from_user_id', 'class_feedback.to_user_id as to_user_id', 'class_feedback.score as score', 'class_feedback.comment as comment', 'classes.topic as topic', 'classes.start_time as start_time', 'classes.end_time as end_time','class_feedback.feedback_time as feedback_time')
 }
 
 const getFeedbackList = async ctx => {
@@ -60,6 +60,7 @@ const getAdminFeedbackList = async ctx => {
         ctx.status = 201
         ctx.set('Location', `${ctx.request.URL}/admin-list`)
         ctx.body = feedback
+        console.log(ctx.body)
     } catch (ex) {
         console.error(ex)
         ctx.throw(409, ex)

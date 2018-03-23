@@ -1,11 +1,6 @@
 const Redis = require('ioredis')
 
-const config = process.env.REDISCLOUD_URL || {
-    host: '127.0.0.1',
-    // password: '',
-    // port: 6379,
-    // db: 4,
-}
+const config = process.env.REDISCLOUD_URL || 'redis://rediscloud:UP18QdLqqApiPtX8Y3cnbOBT9DrAQMVk@redis-16745.c12.us-east-1-4.ec2.cloud.redislabs.com:16745'
 
 const redis = new Redis(config)
 
