@@ -19,7 +19,16 @@ describe('routes:get class feedback', () => {
     afterEach(() => knex.migrate.rollback())
 
     // Here comes the first test
-    describe(`GET ${PATH}/:class_id`, () => {
+    describe(`GET ${PATH}/admin-list/:class_id`, () => {
+        it('should return admin-list', done => {
+            chai
+                .request(server)
+                .get(`${PATH}/admin-list/1`)
+                .end((err, res) => {
+                    done()
+                })
+        })
+
         it('should return a class_feedback', done => {
             chai
                 .request(server)
