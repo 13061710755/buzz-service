@@ -61,7 +61,7 @@ describe('routes: user balance', () => {
                 .request(server)
                 .put(`${PATH}/integral/1`)
                 .send({
-                    integral: 10
+                    integral: 10,
                 })
                 .end((err, res) => {
                     should.not.exist(err)
@@ -70,7 +70,7 @@ describe('routes: user balance', () => {
                     res.body.should.eql({ integral: 10 })
                     done()
                 })
-        });
+        })
     })
     describe(`DELETE ${PATH}/integral/:user_id`, () => {
         it('can consume integral of a user', done => {
@@ -78,7 +78,7 @@ describe('routes: user balance', () => {
                 .request(server)
                 .del(`${PATH}/integral/1`)
                 .send({
-                    integral: 3
+                    integral: 3,
                 })
                 .end((err, res) => {
                     should.not.exist(err)
@@ -87,6 +87,6 @@ describe('routes: user balance', () => {
                     res.body.should.eql({ integral: -3 })
                     done()
                 })
-        });
+        })
     })
 })

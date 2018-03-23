@@ -31,11 +31,11 @@ const getFeedbackList = async ctx => {
 }
 
 const setFeedbackInfo = async ctx => {
-    const {body} = ctx.request
+    const { body } = ctx.request
     const data = body.map(b => Object.assign({
         class_id: ctx.params.class_id,
         from_user_id: ctx.params.from_user_id,
-        to_user_id: ctx.params.to_user_id
+        to_user_id: ctx.params.to_user_id,
     }, b))
 
     try {
@@ -54,8 +54,8 @@ const setFeedbackInfo = async ctx => {
 
 const getAdminFeedbackList = async ctx => {
     try {
-        let feedback = await selectFeedbackList()
-            .where('classes.class_id', ctx.params.class_id);
+        const feedback = await selectFeedbackList()
+            .where('classes.class_id', ctx.params.class_id)
 
         ctx.status = 201
         ctx.set('Location', `${ctx.request.URL}/admin-list`)
@@ -66,4 +66,4 @@ const getAdminFeedbackList = async ctx => {
     }
 }
 
-module.exports = {getFeedbackList, setFeedbackInfo, getAdminFeedbackList}
+module.exports = { getFeedbackList, setFeedbackInfo, getAdminFeedbackList }

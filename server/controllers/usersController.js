@@ -232,11 +232,12 @@ const signInByMobileOrEmail = async ctx => {
     const filterMobile = { 'user_profiles.mobile': mobile }
     const filterEmail = { 'user_profiles.email': email }
 
+    let users
     if (mobile) {
-        var users = await selectUsers().where(filterMobile)
+        users = await selectUsers().where(filterMobile)
     }
     if (email) {
-        var users = await selectUsers().where(filterEmail)
+        users = await selectUsers().where(filterEmail)
     }
 
     if (!users.length) {
