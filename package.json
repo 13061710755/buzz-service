@@ -34,6 +34,7 @@
     "agenda": "^1.0.3",
     "co-wechat-api": "^3.3.4",
     "co-wechat-oauth": "^2.0.1",
+    "ioredis": "^3.2.2",
     "knex": "^0.14.4",
     "koa": "^2.5.0",
     "koa-bodyparser": "^4.2.0",
@@ -42,7 +43,8 @@
     "mysql2": "^1.5.2",
     "pg": "^7.4.1",
     "qiniu": "^7.1.3",
-    "sequelize": "^4.37.0"
+    "sequelize": "^4.37.0",
+    "waliyun": "^3.2.0"
   },
   "apps": [
     {
