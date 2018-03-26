@@ -159,4 +159,48 @@ describe('routes: class schedules', () => {
                 })
         })
     })
+
+    describe('Class Schedule Update', () => {
+        it('should allow change students in a class without changing companion', done => {
+            chai
+                .request(server)
+                .post(`${PATH}`)
+                .send({
+                    adviser_id: 1,
+                    companions: [4, 5, 6],
+                    level: 'aa',
+                    start_time: '20180302T10:00:00Z',
+                    end_time: '20180302T11:00:00Z',
+                    status: 'opened',
+                    name: 'Test class',
+                    remark: 'xxx',
+                    topic: 'animal',
+                    students: [1, 2, 3],
+                    exercises: '["yyy","zzz"]',
+                    room_url: 'http://www.baidu.com',
+                })
+                .end((err, res) => {
+                    should.not.exist(err)
+                    res.status.should.eql(201)
+                    res.type.should.eql('application/json')
+                    const classId = res.body.class_id
+
+                    chai
+                        .request(server)
+                        .post(`${PATH}`)
+                        .send({
+                            class_id: classId,
+                            students: [3, 8, 9],
+                        })
+                        .end((err, res) => {
+                            should.not.exist(err)
+                            res.status.should.eql(200)
+                            res.type.should.eql('application/json')
+                            res.body.students.should.eql('3,8,9')
+
+                            done()
+                        })
+                })
+        })
+    })
 })

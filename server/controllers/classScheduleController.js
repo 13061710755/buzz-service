@@ -122,28 +122,33 @@ const upsert = async ctx => {
             exercises: body.exercises,
         }
 
-        let studentSchedules = body.students.map(studentId => ({
+        let studentSchedules = body.students ? body.students.map(studentId => ({
             user_id: studentId,
             class_id: body.class_id,
             start_time: body.start_time,
             end_time: body.end_time,
             status: 'confirmed',
-        }))
+        })) : []
 
-        let companionSchedules = body.companions.map(companionId => ({
+        console.log('students = ', studentSchedules)
+
+        let companionSchedules = body.companions ? body.companions.map(companionId => ({
             user_id: companionId,
             class_id: body.class_id,
             start_time: body.start_time,
             end_time: body.end_time,
             status: 'confirmed',
-        }))
+        })) : []
 
         if (body.class_id) {
             console.error('body class i d= ', body.class_id)
-            await trx('classes')
-                .returning('class_id')
-                .update(data)
-                .where({ class_id: body.class_id })
+
+            if (JSON.stringify(data) !== '{}') {
+                await trx('classes')
+                    .returning('class_id')
+                    .update(data)
+                    .where({ class_id: body.class_id })
+            }
 
             let originalCompanions = await trx('companion_class_schedule')
                 .select('user_id')
@@ -162,12 +167,15 @@ const upsert = async ctx => {
                     .del()
             }
             if (tbBeUpdatedCompanionSchedules.length) {
-                await trx('companion_class_schedule')
-                    .where('user_id', 'in', tbBeUpdatedCompanionSchedules)
-                    .update({
-                        start_time: body.start_time,
-                        end_time: body.end_time,
-                    })
+                const updateForCompanions = {
+                    start_time: body.start_time,
+                    end_time: body.end_time,
+                }
+                if (JSON.stringify(updateForCompanions) !== '{}') {
+                    await trx('companion_class_schedule')
+                        .where('user_id', 'in', tbBeUpdatedCompanionSchedules)
+                        .update(updateForCompanions)
+                }
             }
 
             companionSchedules = companionSchedules.filter(s => originalCompanions.indexOf(s.user_id) < 0)
@@ -180,20 +188,27 @@ const upsert = async ctx => {
             console.log('original students = ', originalStudents)
 
             const toBeDeletedStudentSchedules = originalStudents.filter(s => studentSchedules.map(ss => ss.user_id).indexOf(s) < 0)
+            console.log('toBeDeleted = ', toBeDeletedStudentSchedules)
             const toBeUpdatedStudentSchedules = originalStudents.filter(s => studentSchedules.map(ss => ss.user_id).indexOf(s) >= 0)
+            console.log('tobeUpdated = ', toBeUpdatedStudentSchedules)
 
             await classSchedules.removeStudents(trx, toBeDeletedStudentSchedules, body.class_id)
 
             if (toBeUpdatedStudentSchedules.length) {
-                await trx('student_class_schedule')
-                    .where('user_id', 'in', toBeUpdatedStudentSchedules)
-                    .update({
-                        start_time: body.start_time,
-                        end_time: body.end_time,
-                    })
+                const updateForStudent = {
+                    start_time: body.start_time,
+                    end_time: body.end_time,
+                }
+
+                if (JSON.stringify(updateForStudent) !== '{}') {
+                    await trx('student_class_schedule')
+                        .where('user_id', 'in', toBeUpdatedStudentSchedules)
+                        .update(updateForStudent)
+                }
             }
 
             studentSchedules = studentSchedules.filter(s => originalStudents.indexOf(s.user_id) < 0)
+            console.log('students after filter = ', studentSchedules)
         } else {
             classIds = await trx('classes')
                 .returning('class_id')
@@ -201,7 +216,7 @@ const upsert = async ctx => {
         }
 
         if (studentSchedules.length) {
-            classSchedules.addStudents(trx, studentSchedules, classIds[0])
+            await classSchedules.addStudents(trx, studentSchedules, classIds[0])
         }
 
         if (companionSchedules.length) {
@@ -264,7 +279,7 @@ const change = async ctx => {
         console.log(ctx.body)
     } catch (error) {
         console.log(error)
-    /* await trx.rollback(); */
+        /* await trx.rollback(); */
     }
 }
 

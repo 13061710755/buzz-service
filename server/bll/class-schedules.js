@@ -10,7 +10,7 @@ module.exports = {
     },
 
     async addStudents(trx, studentSchedules, classId) {
-        await trx('student_class_schedule')
+        const startTime = await trx('student_class_schedule')
             .returning('start_time')
             .insert(studentSchedules.map(s => {
                 s.class_id = classId
