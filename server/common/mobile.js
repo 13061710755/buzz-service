@@ -6,9 +6,11 @@ module.exports = {
     // 发送验证短信
     async sendVerifySms(mobile, digit = 4, expire = 30 * 60) {
         const code = String(_.random(10 ** (digit - 1), (10 ** digit) - 1))
-        await sms.send({ mobile, param: { code } })
+        if (process.env.NODE_ENV !== 'test' && mobile !== '18600000000') {
+            await sms.send({ mobile, param: { code } })
+        }
         await redis.set(`sms:verify:${mobile}`, code, 'ex', expire)
-        return code
+        return { code, expire }
     },
     // 验证
     async verifyByCode(mobile, code) {
