@@ -26,7 +26,7 @@ describe('routes: monitors', () => {
                     should.not.exist(err)
                     res.status.should.eql(200)
                     res.type.should.eql('application/json')
-                    res.body.should.include.keys('everything')
+                    res.body.should.include.keys('everything', 'version')
                     res.body.everything.should.eql('is ok')
                     done()
                 })
