@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "cross-env NODE_ENV=test mocha --timeout 30000 ",
+    "test": "cross-env NODE_ENV=test PORT=16999 mocha --timeout 30000 ",
     "start": "node server/index.js",
     "lint": "eslint --format node_modules/eslint-friendly-formatter . -- --eff-absolute-paths true",
     "lint:fix": "eslint --format node_modules/eslint-friendly-formatter . --fix -- --eff-absolute-paths true",
