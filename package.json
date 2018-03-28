@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --timeout 30000 ",
+    "test": "cross-env NODE_ENV=test mocha --timeout 30000 ",
     "start": "node server/index.js",
     "lint": "eslint --format node_modules/eslint-friendly-formatter . -- --eff-absolute-paths true",
     "lint:fix": "eslint --format node_modules/eslint-friendly-formatter . --fix -- --eff-absolute-paths true",
@@ -21,6 +21,7 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "chai-http": "^3.0.0",
+    "cross-env": "^5.1.4",
     "eslint": "^4.12.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-friendly-formatter": "^3.0.0",
