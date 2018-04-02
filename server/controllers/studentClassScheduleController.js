@@ -43,11 +43,6 @@ const listAll = async ctx => {
 }
 
 const checkTimeConflictsWithDB = async function (user_id, time, start_time, end_time) {
-    console.log(`checking time conflicts with ${start_time.getTime()} to ${end_time.getTime()}`)
-
-    const all = await knex('student_class_schedule').select('*')
-    console.log('all = ', all)
-
     const selected = await knex('student_class_schedule')
         .where('user_id', '=', user_id)
         .andWhere(time, '>=', start_time)
@@ -56,6 +51,28 @@ const checkTimeConflictsWithDB = async function (user_id, time, start_time, end_
 
     if (selected.length > 0) {
         throw new Error(`Schedule ${time} conflicts!`)
+    }
+}
+
+const checkTimeConflictsWithDB2 = async function (user_id, start_time, end_time) {
+    let selected = await knex('student_class_schedule')
+        .where('user_id', '=', user_id)
+        .andWhere('start_time', '<=', end_time)
+        .andWhere('end_time', '>=', end_time)
+        .select('student_class_schedule.user_id')
+
+    if (selected.length > 0) {
+        throw new Error(`Schedule ${start_time} - ${end_time} conflicts with existing schedules!`)
+    }
+
+    selected = await knex('student_class_schedule')
+        .where('user_id', '=', user_id)
+        .andWhere('start_time', '<=', start_time)
+        .andWhere('end_time', '>=', end_time)
+        .select('student_class_schedule.user_id')
+
+    if (selected.length > 0) {
+        throw new Error(`Schedule ${start_time} - ${end_time} conflicts with existing schedules!`)
     }
 }
 
@@ -69,6 +86,7 @@ const create = async ctx => {
             /* eslint-disable */
             await checkTimeConflictsWithDB(ctx.params.user_id, 'start_time', data[i].start_time, data[i].end_time)
             await checkTimeConflictsWithDB(ctx.params.user_id, 'end_time', data[i].start_time, data[i].end_time)
+            await checkTimeConflictsWithDB2(ctx.params.user_id, data[i].start_time, data[i].end_time)
             /* eslint-enable */
         }
 
