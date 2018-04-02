@@ -90,6 +90,51 @@ describe('routes: student class schedule', () => {
                     done()
                 })
         })
+
+        it('should not allow inserting 2 same events ', done => {
+            chai
+                .request(server)
+                .post(`${PATH}/2`)
+                .send([
+                    {
+                        start_time: new Date(2018, 4, 2, 17, 0, 0),
+                        end_time: new Date(2018, 4, 2, 17, 30, 0),
+                    },
+                ])
+                .end((err, res) => {
+                    should.not.exist(err)
+                    res.status.should.eql(201)
+
+                    chai
+                        .request(server)
+                        .get(`${PATH}/2`)
+                        .end((err, res) => {
+                            should.not.exist(err)
+                            res.status.should.eql(200)
+                            console.log('xxx-------------')
+                            console.log(res.body)
+                            res.type.should.eql('application/json')
+                            res.body.length.should.gt(0)
+
+                            chai
+                                .request(server)
+                                .post(`${PATH}/2`)
+                                .send([
+                                    {
+                                        start_time: new Date(2018, 4, 2, 17, 0, 0),
+                                        end_time: new Date(2018, 4, 2, 17, 30, 0),
+                                    },
+                                ])
+                                .end((err, res) => {
+                                    should.exist(err)
+                                    res.status.should.eql(409)
+                                    res.type.should.eql('text/plain')
+                                    res.text.should.eql('Schedule start_time conflicts!')
+                                    done()
+                                })
+                        })
+                })
+        })
     })
 
     describe(`PUT ${PATH}/:user_id`, () => {
