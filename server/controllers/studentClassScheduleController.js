@@ -55,6 +55,9 @@ const checkTimeConflictsWithDB = async function (user_id, time, start_time, end_
 }
 
 const checkTimeConflictsWithDB2 = async function (user_id, start_time, end_time) {
+    start_time = new Date(start_time).toISOString().replace('T', ' ').replace('Z', ' ')
+    end_time = new Date(end_time).toISOString().replace('T', ' ').replace('Z', ' ')
+
     let selected = await knex('student_class_schedule')
         .where('user_id', '=', user_id)
         .andWhere('start_time', '<=', end_time)

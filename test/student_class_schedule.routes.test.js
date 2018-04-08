@@ -111,8 +111,6 @@ describe('routes: student class schedule', () => {
                         .end((err, res) => {
                             should.not.exist(err)
                             res.status.should.eql(200)
-                            console.log('xxx-------------')
-                            console.log(res.body)
                             res.type.should.eql('application/json')
                             res.body.length.should.gt(0)
 
